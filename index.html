@@ -3,47 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Blog</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Countryside Celebrations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        header {
+            background: #35424a;
+            color: #ffffff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #e8491d 3px solid;
+        }
+        header a {
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+        header ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            overflow: hidden;
+        }
+        header li {
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+        header #branding {
+            float: left;
+        }
+        header #branding h1 {
+            margin: 0;
+        }
+        header nav {
+            float: right;
+            margin-top: 10px;
+        }
+        header .highlight, header .current a {
+            color: #e8491d;
+            font-weight: bold;
+        }
+        header a:hover {
+            color: #ffffff;
+            font-weight: bold;
+        }
+        #showcase {
+            min-height: 400px;
+            background: url('/api/placeholder/1200/400') no-repeat center;
+            background-size: cover;
+            text-align: center;
+            color: #ffffff;
+        }
+        #showcase h1 {
+            margin-top: 100px;
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+        #showcase p {
+            font-size: 20px;
+        }
+        #boxes {
+            margin-top: 20px;
+        }
+        #boxes .box {
+            float: left;
+            text-align: center;
+            width: 30%;
+            padding: 10px;
+        }
+        #boxes .box img {
+            width: 90px;
+        }
+        footer {
+            padding: 20px;
+            margin-top: 20px;
+            color: #ffffff;
+            background-color: #e8491d;
+            text-align: center;
+        }
+        @media(max-width: 768px) {
+            header #branding,
+            header nav,
+            header nav li,
+            #boxes .box {
+                float: none;
+                text-align: center;
+                width: 100%;
+            }
+            header {
+                padding-bottom: 20px;
+            }
+            #showcase h1 {
+                margin-top: 40px;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Blog</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-        <h1>Welcome to My Blog</h1>
+        <div class="container">
+            <div id="branding">
+                <h1><span class="highlight">Countryside</span> Celebrations</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li class="current"><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
-    <main>
-        <article>
-            <h2>Blog Post Title</h2>
-            <p>Posted on <time datetime="2023-10-01">October 1, 2023</time> by Author</p>
-            <p>This is a simple website to explain how bad kirstie smells.</p>
-            <p> This is a new paragraph</p>
-        </article>
-        <article>
-            <h2>Another Blog Post</h2>
-            <p>Posted on <time datetime="2023-09-25">September 25, 2023</time> by Author</p>
-            <p>This is another sample blog post. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet accumsan tortor.</p>
-        </article>
-    </main>
-    <aside>
-        <h2>About Me</h2>
-        <p>Hi, I'm a blogger passionate about sharing my thoughts and experiences.</p>
-        <h2>Categories</h2>
-        <ul>
-            <li><a href="#">Technology</a></li>
-            <li><a href="#">Lifestyle</a></li>
-            <li><a href="#">Travel</a></li>
-        </ul>
-    </aside>
+
+    <section id="showcase">
+        <div class="container">
+            <h1>Create Unforgettable Family Memories</h1>
+            <p>From birthdays to weddings, we bring your vision to life with a touch of countryside charm.</p>
+        </div>
+    </section>
+
+    <section id="boxes">
+        <div class="container">
+            <div class="box">
+                <img src="/api/placeholder/90/90" alt="Birthday icon">
+                <h3>Birthdays</h3>
+                <p>Celebrate life's milestones with our creative and fun birthday party planning.</p>
+            </div>
+            <div class="box">
+                <img src="/api/placeholder/90/90" alt="Wedding icon">
+                <h3>Weddings</h3>
+                <p>Turn your special day into a magical countryside celebration.</p>
+            </div>
+            <div class="box">
+                <img src="/api/placeholder/90/90" alt="Family icon">
+                <h3>Family Events</h3>
+                <p>Create lasting memories with perfectly planned family gatherings.</p>
+            </div>
+        </div>
+    </section>
+
     <footer>
-        <p>&copy; 2023 My Blog. All rights reserved.</p>
-        <p>Contact: <a href="mailto:example@example.com">example@example.com</a></p>
+        <p>Countryside Celebrations, Copyright &copy; 2024</p>
     </footer>
 </body>
 </html>
