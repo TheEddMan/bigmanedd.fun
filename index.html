@@ -5,159 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Countryside Celebrations</title>
     <style>
-        body {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            height: 100%;
             font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
         }
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-        }
-        header {
-            background: #35424a;
-            color: #ffffff;
-            padding-top: 30px;
-            min-height: 70px;
-            border-bottom: #e8491d 3px solid;
-        }
-        header a {
-            color: #ffffff;
-            text-decoration: none;
-            text-transform: uppercase;
-            font-size: 16px;
-        }
-        header ul {
-            padding: 0;
-            margin: 0;
-            list-style: none;
-            overflow: hidden;
-        }
-        header li {
-            float: left;
-            display: inline;
-            padding: 0 20px 0 20px;
-        }
-        header #branding {
-            float: left;
-        }
-        header #branding h1 {
-            margin: 0;
-        }
-        header nav {
-            float: right;
-            margin-top: 10px;
-        }
-        header .highlight, header .current a {
-            color: #e8491d;
-            font-weight: bold;
-        }
-        header a:hover {
-            color: #ffffff;
-            font-weight: bold;
-        }
-        #showcase {
-            min-height: 400px;
-            background: url('/api/placeholder/1200/400') no-repeat center;
+        .bg {
+            background-image: url('/api/placeholder/1920/1080');
+            height: 100%;
+            background-position: center;
+            background-repeat: no-repeat;
             background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .content {
             text-align: center;
-            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 2rem;
+            border-radius: 10px;
         }
-        #showcase h1 {
-            margin-top: 100px;
-            font-size: 55px;
-            margin-bottom: 10px;
+        h1 {
+            font-size: 3rem;
+            color: #35424a;
+            margin-bottom: 1rem;
         }
-        #showcase p {
-            font-size: 20px;
+        p {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 2rem;
         }
-        #boxes {
-            margin-top: 20px;
+        .social-links {
+            margin-top: 2rem;
         }
-        #boxes .box {
-            float: left;
-            text-align: center;
-            width: 30%;
-            padding: 10px;
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            font-size: 1.5rem;
+            color: #35424a;
+            text-decoration: none;
         }
-        #boxes .box img {
-            width: 90px;
-        }
-        footer {
-            padding: 20px;
-            margin-top: 20px;
-            color: #ffffff;
-            background-color: #e8491d;
-            text-align: center;
-        }
-        @media(max-width: 768px) {
-            header #branding,
-            header nav,
-            header nav li,
-            #boxes .box {
-                float: none;
-                text-align: center;
-                width: 100%;
-            }
-            header {
-                padding-bottom: 20px;
-            }
-            #showcase h1 {
-                margin-top: 40px;
-            }
+        .social-links a:hover {
+            color: #e8491d;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div id="branding">
-                <h1><span class="highlight">Countryside</span> Celebrations</h1>
-            </div>
-            <nav>
-                <ul>
-                    <li class="current"><a href="#home">Home</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <section id="showcase">
-        <div class="container">
-            <h1>Create Unforgettable Family Memories</h1>
-            <p>From birthdays to weddings, we bring your vision to life with a touch of countryside charm.</p>
-        </div>
-    </section>
-
-    <section id="boxes">
-        <div class="container">
-            <div class="box">
-                <img src="/api/placeholder/90/90" alt="Birthday icon">
-                <h3>Birthdays</h3>
-                <p>Celebrate life's milestones with our creative and fun birthday party planning.</p>
-            </div>
-            <div class="box">
-                <img src="/api/placeholder/90/90" alt="Wedding icon">
-                <h3>Weddings</h3>
-                <p>Turn your special day into a magical countryside celebration.</p>
-            </div>
-            <div class="box">
-                <img src="/api/placeholder/90/90" alt="Family icon">
-                <h3>Family Events</h3>
-                <p>Create lasting memories with perfectly planned family gatherings.</p>
+    <div class="bg">
+        <div class="content">
+            <h1>Countryside Celebrations</h1>
+            <p>Creating unforgettable family memories in the heart of the countryside</p>
+            <div class="social-links">
+                <a href="#" target="_blank"><i class="fab fa-facebook"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="#" target="_blank"><i class="fab fa-pinterest"></i></a>
             </div>
         </div>
-    </section>
-
-    <footer>
-        <p>Countryside Celebrations, Copyright &copy; 2024</p>
-    </footer>
+    </div>
 </body>
 </html>
