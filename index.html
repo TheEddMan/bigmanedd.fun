@@ -52,4 +52,11 @@
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
             document.getElementById("countdown").innerHTML = 
-                `${days.toString().padStart(3, '
+                `${days.toString().padStart(3, '0')}<span class="colon">:</span>${hours.toString().padStart(2, '0')}<span class="colon">:</span>${minutes.toString().padStart(2, '0')}<span class="colon">:</span>${seconds.toString().padStart(2, '0')}`;
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
