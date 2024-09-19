@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💀💀💀💀💀</title>
+    <title>Glowing Digital Countdown Timer</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
@@ -12,40 +12,33 @@
             padding: 0;
             height: 100%;
             width: 100%;
-            background-color: #f0f0f0;
+            background-color: #000;
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-        #clock-face {
-            background-color: #333;
-            border: 2px solid #222;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            overflow: hidden;
         }
         #countdown {
             font-family: 'VT323', monospace;
-            font-size: clamp(2rem, 10vw, 6rem);
+            font-size: clamp(3rem, 15vw, 12rem);
             color: #ff0000;
-            background-color: #000;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-shadow: 0 0 5px rgba(255,0,0,0.7);
+            text-shadow: 
+                0 0 5px #ff0000,
+                0 0 10px #ff0000,
+                0 0 20px #ff0000,
+                0 0 40px #ff0000;
         }
         .colon {
             animation: blink 1s infinite;
         }
         @keyframes blink {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
 <body>
-    <div id="clock-face">
-        <div id="countdown"></div>
-    </div>
+    <div id="countdown"></div>
 
     <script>
         function updateCountdown() {
@@ -59,11 +52,4 @@
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
             document.getElementById("countdown").innerHTML = 
-                `${days.toString().padStart(3, '0')}<span class="colon">:</span>${hours.toString().padStart(2, '0')}<span class="colon">:</span>${minutes.toString().padStart(2, '0')}<span class="colon">:</span>${seconds.toString().padStart(2, '0')}`;
-        }
-
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
-    </script>
-</body>
-</html>
+                `${days.toString().padStart(3, '
