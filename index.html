@@ -3,27 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Countdown Timer</title>
+    <title>Scalable Countdown Timer</title>
     <style>
-        body {
+        body, html {
             margin: 0;
             padding: 0;
+            height: 100%;
+            width: 100%;
+            background-color: black;
+            font-family: 'Courier New', monospace;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background-color: black;
-            font-family: 'Courier New', monospace;
+        }
+        #countdown-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 800px;
         }
         #countdown {
-            font-size: 15vw;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
             color: red;
+            font-size: clamp(2rem, 10vw, 8rem);
             text-align: center;
+            line-height: 1.2;
+        }
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+        }
+        .time-value {
+            font-weight: bold;
+        }
+        .time-label {
+            font-size: 0.3em;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        @media (max-width: 600px) {
+            #countdown {
+                font-size: clamp(1.5rem, 8vw, 4rem);
+            }
+            .time-unit {
+                margin: 0 5px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="countdown"></div>
+    <div id="countdown-container">
+        <div id="countdown"></div>
+    </div>
 
     <script>
         function updateCountdown() {
@@ -36,8 +72,25 @@
             const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-            document.getElementById("countdown").innerHTML = 
-                `${days.toString().padStart(3, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            const countdownElement = document.getElementById("countdown");
+            countdownElement.innerHTML = `
+                <div class="time-unit">
+                    <span class="time-value">${days.toString().padStart(3, '0')}</span>
+                    <span class="time-label">Days</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value">${hours.toString().padStart(2, '0')}</span>
+                    <span class="time-label">Hours</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value">${minutes.toString().padStart(2, '0')}</span>
+                    <span class="time-label">Minutes</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-value">${seconds.toString().padStart(2, '0')}</span>
+                    <span class="time-label">Seconds</span>
+                </div>
+            `;
         }
 
         setInterval(updateCountdown, 1000);
