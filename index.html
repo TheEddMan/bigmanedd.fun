@@ -1,134 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💀💀💀💀💀💀💀</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+  <meta charset="UTF-8">
+  <title>Gulag Terminal Fight</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #0f0;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      transition: background-color 0.3s;
+    }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        .crt-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        #countdown {
-            font-family: 'VT323', monospace;
-            font-size: clamp(3rem, 15vw, 12rem);
-            transition: color 1s linear, text-shadow 1s linear;
-            position: relative;
-            z-index: 2;
-            text-align: center;
-        }
-        .colon {
-            animation: blink 1s infinite;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .crt-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-            z-index: 3;
-        }
-        .crt-flicker {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(18, 16, 16, 0.1);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 4;
-            animation: flicker 0.15s infinite;
-        }
-        @keyframes flicker {
-            0% { opacity: 0.27861; }
-            5% { opacity: 0.34769; }
-            10% { opacity: 0.23604; }
-            15% { opacity: 0.90626; }
-            20% { opacity: 0.18128; }
-            25% { opacity: 0.83891; }
-            30% { opacity: 0.65583; }
-            35% { opacity: 0.67807; }
-            40% { opacity: 0.26559; }
-            45% { opacity: 0.84693; }
-            50% { opacity: 0.96019; }
-            55% { opacity: 0.08594; }
-            60% { opacity: 0.20313; }
-            65% { opacity: 0.71988; }
-            70% { opacity: 0.53455; }
-            75% { opacity: 0.37288; }
-            80% { opacity: 0.71428; }
-            85% { opacity: 0.70419; }
-            90% { opacity: 0.7003; }
-            95% { opacity: 0.36108; }
-            100% { opacity: 0.24387; }
-        }
-    </style>
+    #inputs, #fight-log, #ready, #winner {
+      text-align: center;
+      width: 80%;
+      max-width: 800px;
+    }
+
+    input, button {
+      margin: 5px;
+      padding: 10px;
+      font-size: 1rem;
+      font-family: monospace;
+      background-color: #000;
+      color: #0f0;
+      border: 1px solid #0f0;
+    }
+
+    #fight-log {
+      font-size: 1.5rem;
+      line-height: 2.2rem;
+      margin-top: 20px;
+    }
+
+    .line {
+      opacity: 0;
+      transition: opacity 1s, font-size 1s, transform 1s;
+      font-size: 1.5rem;
+    }
+
+    .line.visible {
+      opacity: 1;
+      font-size: 2rem;
+      transform: scale(1.1);
+      animation: flicker 0.2s infinite alternate;
+    }
+
+    .line.faded {
+      opacity: 0.2;
+      font-size: 1.2rem;
+      transform: scale(1);
+    }
+
+    #ready {
+      font-size: 2rem;
+      margin-top: 30px;
+      animation: flicker 1s infinite alternate;
+    }
+
+    #winner {
+      font-size: 2.5rem;
+      margin-top: 30px;
+      text-shadow: 0 0 10px #0f0;
+      position: relative;
+    }
+
+    /* Retro CRT flicker effect */
+    @keyframes flicker {
+      0% { opacity: 0.9; }
+      100% { opacity: 1; }
+    }
+
+    /* Confetti effect */
+    .confetti {
+      position: absolute;
+      font-size: 1rem;
+      animation: fall linear infinite;
+      color: #0f0;
+      opacity: 0.7;
+    }
+
+    @keyframes fall {
+      from {
+        transform: translateY(-20px) rotate(0deg);
+      }
+      to {
+        transform: translateY(300px) rotate(360deg);
+      }
+    }
+
+    .hurt-flash {
+      background-color: #400;
+    }
+  </style>
 </head>
 <body>
-    <div class="crt-container">
-        <div id="countdown"></div>
-        <div class="crt-overlay"></div>
-        <div class="crt-flicker"></div>
-    </div>
 
-    <script>
-        function updateCountdown() {
-            const targetDate = new Date("2024-09-30T00:00:00").getTime();
-            const now = new Date().getTime();
-            const timeLeft = targetDate - now;
+  <div id="inputs">
+    <input id="fighter1Name" placeholder="Fighter 1">
+    <input id="fighter2Name" placeholder="Fighter 2">
+    <button onclick="startFight()">Start Fight</button>
+  </div>
 
-            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+  <div id="ready"></div>
+  <div id="fight-log"></div>
+  <div id="winner"></div>
 
-            document.getElementById("countdown").innerHTML = 
-                `${days.toString().padStart(3, '0')}<span class="colon">:</span>${hours.toString().padStart(2, '0')}<span class="colon">:</span>${minutes.toString().padStart(2, '0')}<span class="colon">:</span>${seconds.toString().padStart(2, '0')}`;
-            
-            updateColor();
+  <script>
+    const brutalLines = [
+      "{1} slams a rusted pipe into {2}'s jaw — teeth scatter like dice!",
+      "{2} counters with a savage elbow that cracks {1}'s ribs!",
+      "{1} grabs {2} and slams them into the concrete wall!",
+      "{2} hurls a broken chain at {1}, wrapping it around their throat!",
+      "{1} delivers a brutal kick that lifts {2} off the ground!",
+      "{2}'s face smacks the floor — a pool of blood begins to form.",
+      "{1} pounds down with fists, each hit echoing through the Gulag.",
+      "{2} spits blood, then charges like a rabid beast!",
+      "{1} bites {2}'s ear and doesn't let go!",
+      "{2} gouges at {1}'s eyes in a frenzy!"
+    ];
+
+    let fightLines = [];
+    let lineIndex = 0;
+    let winner = '';
+
+    function startFight() {
+      const name1 = document.getElementById('fighter1Name').value || "Fighter 1";
+      const name2 = document.getElementById('fighter2Name').value || "Fighter 2";
+
+      const roles = ['', ''];
+      const fighter1 = `${roles[Math.floor(Math.random() * 2)]} ${name1}`;
+      const fighter2 = `${roles[Math.floor(Math.random() * 2)]} ${name2}`;
+
+      document.getElementById('inputs').style.display = 'none';
+      document.getElementById('fight-log').innerHTML = '';
+      document.getElementById('winner').textContent = '';
+      document.getElementById('ready').textContent = 'READY...';
+
+      setTimeout(() => {
+        document.getElementById('ready').textContent = '';
+        runFight(fighter1, fighter2);
+      }, 1500);
+    }
+
+    function runFight(f1, f2) {
+      const used = new Set();
+      const chosen = [];
+      while (chosen.length < 5) {
+        const i = Math.floor(Math.random() * brutalLines.length);
+        if (!used.has(i)) {
+          used.add(i);
+          chosen.push(brutalLines[i].replace('{1}', f1).replace('{2}', f2));
         }
+      }
 
-        function updateColor() {
-            const hue = (Date.now() / 1000) % 360;
-            const color = `hsl(${hue}, 100%, 50%)`;
-            const countdown = document.getElementById("countdown");
-            countdown.style.color = color;
-            countdown.style.textShadow = `
-                0 0 5px ${color},
-                0 0 10px ${color},
-                0 0 20px ${color},
-                0 0 40px ${color}
-            `;
-        }
+      fightLines = chosen;
+      lineIndex = 0;
+      winner = Math.random() > 0.5 ? f1 : f2;
+      showNextLine();
+    }
 
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
-    </script>
+    function showNextLine() {
+      if (lineIndex < fightLines.length) {
+        const log = document.getElementById('fight-log');
+        const lines = log.querySelectorAll('.line');
+
+        // Fade previous lines
+        lines.forEach(line => {
+          line.classList.remove('visible');
+          line.classList.add('faded');
+        });
+
+        // Flash screen red
+        flashHurt();
+
+        // Add new line
+        const line = document.createElement('div');
+        line.className = 'line';
+        line.textContent = fightLines[lineIndex];
+        log.appendChild(line);
+
+        // Trigger visibility
+        setTimeout(() => line.classList.add('visible'), 10);
+
+        lineIndex++;
+        setTimeout(showNextLine, 4000);
+      } else {
+        setTimeout(showWinner, 6000);
+      }
+    }
+
+    function showWinner() {
+      const winnerDiv = document.getElementById('winner');
+      winnerDiv.textContent = `🏆 ${winner} wins the Gulag.`;
+
+      for (let i = 0; i < 50; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.textContent = ['*', '+', '.', '`', '^'][Math.floor(Math.random() * 5)];
+        c.style.left = `${Math.random() * 100}%`;
+        c.style.animationDuration = `${1.5 + Math.random()}s`;
+        winnerDiv.appendChild(c);
+      }
+    }
+
+    function flashHurt() {
+      document.body.classList.add('hurt-flash');
+      setTimeout(() => {
+        document.body.classList.remove('hurt-flash');
+      }, 100);
+    }
+  </script>
+
 </body>
 </html>
