@@ -1,222 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Gulag Terminal Fight</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gulag Fight Simulator</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
     body {
-      background-color: #000;
-      color: #0f0;
-      font-family: 'Courier New', Courier, monospace;
+      margin: 0;
+      font-family: 'Press Start 2P', monospace;
+      background-color: black;
+      color: #39ff14;
+      overflow: hidden;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      overflow: hidden;
-      transition: background-color 0.3s;
     }
 
-    #inputs, #fight-log, #ready, #winner {
+    .scanlines::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0px,
+        rgba(0, 0, 0, 0.15) 2px,
+        rgba(0, 0, 0, 0) 4px
+      );
+      z-index: 2;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
       text-align: center;
-      width: 80%;
       max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
     }
 
-    input, button {
-      margin: 5px;
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    input {
+      background-color: black;
+      border: 2px solid #39ff14;
+      color: #39ff14;
       padding: 10px;
-      font-size: 1rem;
-      font-family: monospace;
-      background-color: #000;
-      color: #0f0;
-      border: 1px solid #0f0;
+      margin: 5px;
+      width: 80%;
+      font-family: 'Press Start 2P', monospace;
     }
 
-    #fight-log {
-      font-size: 1.5rem;
-      line-height: 2.2rem;
-      margin-top: 20px;
+    button {
+      background-color: #39ff14;
+      color: black;
+      padding: 10px 20px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      margin-top: 10px;
+    }
+
+    #countdown, #fight-log, #confetti, #winner {
+      display: none;
     }
 
     .line {
-      opacity: 0;
-      transition: opacity 1s, font-size 1s, transform 1s;
-      font-size: 1.5rem;
+      opacity: 0.4;
+      font-size: 2rem;
+      margin-top: 20px;
+      transition: opacity 0.5s;
     }
 
-    .line.visible {
+    .line.newest {
       opacity: 1;
-      font-size: 2rem;
-      transform: scale(1.1);
-      animation: flicker 0.2s infinite alternate;
+      color: #39ff14;
+      font-weight: bold;
+      font-size: 2.8rem;
+      animation: shake 0.4s;
     }
 
-    .line.faded {
-      opacity: 0.2;
+    @keyframes shake {
+      0% { transform: translate(0px, 0px); }
+      20% { transform: translate(-6px, 6px); }
+      40% { transform: translate(6px, -6px); }
+      60% { transform: translate(-6px, 6px); }
+      80% { transform: translate(6px, -6px); }
+      100% { transform: translate(0px, 0px); }
+    }
+
+    #confetti {
       font-size: 1.2rem;
-      transform: scale(1);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 20px;
+      animation: explode 0.6s ease-in-out;
+      flex-direction: row;
     }
 
-    #ready {
+    .confetti-piece {
+      color: #ff69b4;
       font-size: 2rem;
-      margin-top: 30px;
-      animation: flicker 1s infinite alternate;
+      animation: burst 0.8s ease-in-out infinite;
+    }
+
+    @keyframes burst {
+      0% { transform: scale(0.5) rotate(0deg); opacity: 0; }
+      50% { transform: scale(1.8) rotate(180deg); opacity: 1; }
+      100% { transform: scale(1) rotate(360deg); opacity: 0; }
     }
 
     #winner {
-      font-size: 2.5rem;
-      margin-top: 30px;
-      text-shadow: 0 0 10px #0f0;
-      position: relative;
+      font-size: 2rem;
+      margin-top: 40px;
+      color: #ff69b4;
+      animation: explode 0.6s ease-in-out;
     }
 
-    /* Retro CRT flicker effect */
-    @keyframes flicker {
-      0% { opacity: 0.9; }
-      100% { opacity: 1; }
-    }
-
-    /* Confetti effect */
-    .confetti {
-      position: absolute;
-      font-size: 1rem;
-      animation: fall linear infinite;
-      color: #0f0;
-      opacity: 0.7;
-    }
-
-    @keyframes fall {
-      from {
-        transform: translateY(-20px) rotate(0deg);
-      }
-      to {
-        transform: translateY(300px) rotate(360deg);
-      }
-    }
-
-    .hurt-flash {
-      background-color: #400;
+    @keyframes explode {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
   </style>
 </head>
-<body>
-
-  <div id="inputs">
-    <input id="fighter1Name" placeholder="Fighter 1">
-    <input id="fighter2Name" placeholder="Fighter 2">
-    <button onclick="startFight()">Start Fight</button>
+<body class="scanlines">
+  <div class="container" id="title-screen">
+    <h1>GULAG FIGHT SIMULATOR</h1>
+    <input type="text" id="fighter1" placeholder="Enter Fighter 1 Name" />
+    <input type="text" id="fighter2" placeholder="Enter Fighter 2 Name" />
+    <br />
+    <button onclick="startGame()">Enter the Gulag</button>
   </div>
 
-  <div id="ready"></div>
-  <div id="fight-log"></div>
-  <div id="winner"></div>
+  <div class="container" id="countdown">
+    <h1 id="count">3</h1>
+  </div>
+
+  <div class="container" id="fight-log"></div>
+  <div class="container" id="winner"></div>
+  <div class="container" id="confetti"></div>
 
   <script>
-    const brutalLines = [
-      "{1} slams a rusted pipe into {2}'s jaw — teeth scatter like dice!",
-      "{2} counters with a savage elbow that cracks {1}'s ribs!",
-      "{1} grabs {2} and slams them into the concrete wall!",
-      "{2} hurls a broken chain at {1}, wrapping it around their throat!",
-      "{1} delivers a brutal kick that lifts {2} off the ground!",
-      "{2}'s face smacks the floor — a pool of blood begins to form.",
-      "{1} pounds down with fists, each hit echoing through the Gulag.",
-      "{2} spits blood, then charges like a rabid beast!",
-      "{1} bites {2}'s ear and doesn't let go!",
-      "{2} gouges at {1}'s eyes in a frenzy!"
+    const countdownEl = document.getElementById("count");
+    const countdownScreen = document.getElementById("countdown");
+    const titleScreen = document.getElementById("title-screen");
+    const fightLog = document.getElementById("fight-log");
+    const confetti = document.getElementById("confetti");
+    const winnerDiv = document.getElementById("winner");
+
+    let lines = [
+      "{ATTACKER} rips out {DEFENDER}'s teeth with a rusted wrench!",
+      "{ATTACKER} smashes {DEFENDER}'s kneecaps like glass marbles!",
+      "{ATTACKER} drives a nail through {DEFENDER}'s hand with a brick!",
+      "{ATTACKER} shoves {DEFENDER} face-first into a broken pipe!",
+      "{ATTACKER} ends it by choking {DEFENDER} out with torn wire!"
     ];
 
-    let fightLines = [];
-    let lineIndex = 0;
-    let winner = '';
+    function startGame() {
+      const name1 = document.getElementById("fighter1").value || "Fighter 1";
+      const name2 = document.getElementById("fighter2").value || "Fighter 2";
 
-    function startFight() {
-      const name1 = document.getElementById('fighter1Name').value || "Fighter 1";
-      const name2 = document.getElementById('fighter2Name').value || "Fighter 2";
+      titleScreen.style.display = "none";
+      countdownScreen.style.display = "block";
 
-      const roles = ['', ''];
-      const fighter1 = `${roles[Math.floor(Math.random() * 2)]} ${name1}`;
-      const fighter2 = `${roles[Math.floor(Math.random() * 2)]} ${name2}`;
-
-      document.getElementById('inputs').style.display = 'none';
-      document.getElementById('fight-log').innerHTML = '';
-      document.getElementById('winner').textContent = '';
-      document.getElementById('ready').textContent = 'READY...';
-
-      setTimeout(() => {
-        document.getElementById('ready').textContent = '';
-        runFight(fighter1, fighter2);
-      }, 1500);
-    }
-
-    function runFight(f1, f2) {
-      const used = new Set();
-      const chosen = [];
-      while (chosen.length < 5) {
-        const i = Math.floor(Math.random() * brutalLines.length);
-        if (!used.has(i)) {
-          used.add(i);
-          chosen.push(brutalLines[i].replace('{1}', f1).replace('{2}', f2));
+      let count = 3;
+      const interval = setInterval(() => {
+        if (count > 0) {
+          countdownEl.textContent = count;
+          count--;
+        } else {
+          clearInterval(interval);
+          countdownEl.textContent = "FIGHT!";
+          setTimeout(() => {
+            countdownScreen.style.display = "none";
+            startFight(name1, name2);
+          }, 1000);
         }
-      }
-
-      fightLines = chosen;
-      lineIndex = 0;
-      winner = Math.random() > 0.5 ? f1 : f2;
-      showNextLine();
+      }, 1000);
     }
 
-    function showNextLine() {
-      if (lineIndex < fightLines.length) {
-        const log = document.getElementById('fight-log');
-        const lines = log.querySelectorAll('.line');
+    function startFight(name1, name2) {
+      fightLog.style.display = "block";
+      let index = 0;
 
-        // Fade previous lines
-        lines.forEach(line => {
-          line.classList.remove('visible');
-          line.classList.add('faded');
-        });
+      const fightInterval = setInterval(() => {
+        if (index < lines.length) {
+          const attacker = Math.random() > 0.5 ? name1 : name2;
+          const defender = attacker === name1 ? name2 : name1;
 
-        // Flash screen red
-        flashHurt();
+          const line = lines[index]
+            .replace("{ATTACKER}", attacker)
+            .replace("{DEFENDER}", defender);
 
-        // Add new line
-        const line = document.createElement('div');
-        line.className = 'line';
-        line.textContent = fightLines[lineIndex];
-        log.appendChild(line);
+          const div = document.createElement("div");
+          div.className = "line newest";
+          div.textContent = line;
 
-        // Trigger visibility
-        setTimeout(() => line.classList.add('visible'), 10);
+          const previous = fightLog.querySelector(".newest");
+          if (previous) previous.classList.remove("newest");
 
-        lineIndex++;
-        setTimeout(showNextLine, 4000);
-      } else {
-        setTimeout(showWinner, 6000);
-      }
+          fightLog.appendChild(div);
+          if (fightLog.children.length > 5) {
+            fightLog.removeChild(fightLog.children[0]);
+          }
+
+          index++;
+        } else {
+          clearInterval(fightInterval);
+          declareWinner(name1, name2);
+        }
+      }, 2000);
     }
 
-    function showWinner() {
-      const winnerDiv = document.getElementById('winner');
-      winnerDiv.textContent = `🏆 ${winner} wins the Gulag.`;
+    function declareWinner(name1, name2) {
+      const winner = Math.random() > 0.5 ? name1 : name2;
+      winnerDiv.style.display = "block";
+      winnerDiv.textContent = `AND THE WINNER IS ${winner}!`;
+      confetti.style.display = "flex";
+      confetti.innerHTML = '';
 
-      for (let i = 0; i < 50; i++) {
-        const c = document.createElement('div');
-        c.className = 'confetti';
-        c.textContent = ['*', '+', '.', '`', '^'][Math.floor(Math.random() * 5)];
-        c.style.left = `${Math.random() * 100}%`;
-        c.style.animationDuration = `${1.5 + Math.random()}s`;
-        winnerDiv.appendChild(c);
+      for (let i = 0; i < 100; i++) {
+        const span = document.createElement('span');
+        span.className = 'confetti-piece';
+        span.textContent = winner;
+        confetti.appendChild(span);
       }
-    }
-
-    function flashHurt() {
-      document.body.classList.add('hurt-flash');
-      setTimeout(() => {
-        document.body.classList.remove('hurt-flash');
-      }, 100);
     }
   </script>
-
 </body>
 </html>
