@@ -2,242 +2,1052 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gulag Fight Simulator</title>
+  <title>My RSS Board</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+    :root {
+      --bg: #0f172a;
+      --bg-soft: #1e293b;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #1f2937;
+      --danger: #f97373;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      font-family: 'Press Start 2P', monospace;
-      background-color: black;
-      color: #39ff14;
-      overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 60%);
+      color: var(--text);
+      min-height: 100vh;
       display: flex;
       justify-content: center;
+      padding: 24px 12px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1100px;
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.85);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      display: grid;
+      grid-template-columns: minmax(0, 320px) minmax(0, 1.8fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 800px) {
+      .app {
+        grid-template-columns: 1fr;
+        padding: 18px;
+      }
+    }
+
+    .app-header {
+      grid-column: 1 / -1;
+      margin-bottom: 6px;
+      display: flex;
       align-items: center;
-      height: 100vh;
+      justify-content: space-between;
+      gap: 12px;
     }
 
-    .scanlines::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0) 0px,
-        rgba(0, 0, 0, 0.15) 2px,
-        rgba(0, 0, 0, 0) 4px
-      );
-      z-index: 2;
+    .app-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .container {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      max-width: 800px;
-      width: 100%;
-      margin: 0 auto;
+    .logo-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #e0f2fe, #38bdf8);
+      box-shadow: 0 0 30px rgba(56, 189, 248, 0.7);
     }
 
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 20px;
+    .app-title h1 {
+      font-size: 1.3rem;
+      margin: 0;
+      letter-spacing: 0.03em;
     }
 
-    input {
-      background-color: black;
-      border: 2px solid #39ff14;
-      color: #39ff14;
-      padding: 10px;
-      margin: 5px;
-      width: 80%;
-      font-family: 'Press Start 2P', monospace;
+    .app-title span {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
     }
 
-    button {
-      background-color: #39ff14;
-      color: black;
-      padding: 10px 20px;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      font-family: 'Press Start 2P', monospace;
+    .app-badge {
+      font-size: 0.75rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 4px 10px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .column-card {
+      background: radial-gradient(
+          circle at top left,
+          rgba(56, 189, 248, 0.05),
+          transparent 60%
+        ),
+        var(--bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
+
+    .subtitle {
+      margin: 2px 0 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
       margin-top: 10px;
     }
 
-    #countdown, #fight-log, #confetti, #winner {
-      display: none;
+    label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
     }
 
-    .line {
-      opacity: 0.4;
-      font-size: 2rem;
-      margin-top: 20px;
-      transition: opacity 0.5s;
+    input {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border 0.15s ease, box-shadow 0.15s ease,
+        background-color 0.15s ease, transform 0.08s ease;
     }
 
-    .line.newest {
-      opacity: 1;
-      color: #39ff14;
-      font-weight: bold;
-      font-size: 2.8rem;
-      animation: shake 0.4s;
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.3);
+      background: rgba(15, 23, 42, 1);
+      transform: translateY(-0.5px);
     }
 
-    @keyframes shake {
-      0% { transform: translate(0px, 0px); }
-      20% { transform: translate(-6px, 6px); }
-      40% { transform: translate(6px, -6px); }
-      60% { transform: translate(-6px, 6px); }
-      80% { transform: translate(6px, -6px); }
-      100% { transform: translate(0px, 0px); }
-    }
-
-    #confetti {
-      font-size: 1.2rem;
+    .input-row {
       display: flex;
-      justify-content: center;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .input-row input[type="url"] {
+      flex: 1;
+    }
+
+    button {
+      font-size: 0.9rem;
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+      color: #0b1120;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: transform 0.1s ease, box-shadow 0.1s ease,
+        filter 0.1s ease;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.35);
+      filter: brightness(1.04);
+    }
+
+    button:active {
+      transform: translateY(0.5px) scale(0.99);
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding-inline: 10px;
+      font-size: 0.8rem;
+    }
+
+    .btn-secondary:hover {
+      filter: none;
+      background: rgba(15, 23, 42, 0.7);
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+    }
+
+    .feeds-list {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .feed-item {
+      border-radius: var(--radius-md);
+      padding: 9px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.9),
+        rgba(15, 23, 42, 0.98)
+      );
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.08s ease,
+        border-color 0.08s ease, background 0.08s ease;
+    }
+
+    .feed-item:hover {
+      transform: translateY(-1px);
+      border-color: rgba(56, 189, 248, 0.7);
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.9);
+      background: radial-gradient(
+          circle at top left,
+          rgba(56, 189, 248, 0.06),
+          transparent 60%
+        ),
+        rgba(15, 23, 42, 0.97);
+    }
+
+    .feed-item.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.5);
+      background: linear-gradient(
+        135deg,
+        rgba(8, 47, 73, 0.95),
+        rgba(15, 23, 42, 0.98)
+      );
+    }
+
+    .feed-item-main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .feed-item-title {
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .feed-item-url {
+      font-size: 0.75rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .feed-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .chip {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--muted);
+    }
+
+    .chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
+      display: inline-block;
+      margin-right: 4px;
+    }
+
+    .btn-icon {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: transparent;
+      padding: 3px 7px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .btn-icon:hover {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(248, 113, 113, 0.8);
+      color: #fecaca;
+      box-shadow: none;
+    }
+
+    .feeds-empty {
+      margin-top: 16px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      padding: 10px;
+      border-radius: var(--radius-md);
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.75);
+    }
+
+    /* Right column / articles */
+
+    .articles-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .articles-header-main {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .articles-feed-name {
+      font-size: 0.92rem;
+      color: #e5e7eb;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .articles-feed-url {
+      font-size: 0.8rem;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .status-pill span {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .articles-list {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 420px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .article-card {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 10px 11px;
+      background: radial-gradient(
+          circle at top left,
+          rgba(56, 189, 248, 0.08),
+          transparent 60%
+        ),
+        rgba(15, 23, 42, 0.98);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: transform 0.08s ease, box-shadow 0.08s ease,
+        border-color 0.08s ease;
+    }
+
+    .article-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.9);
+      border-color: rgba(56, 189, 248, 0.8);
+    }
+
+    .article-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .article-title-row h3 {
+      margin: 0;
+      font-size: 0.98rem;
+      line-height: 1.3;
+    }
+
+    .article-meta {
+      display: flex;
       flex-wrap: wrap;
-      gap: 5px;
-      padding: 20px;
-      animation: explode 0.6s ease-in-out;
-      flex-direction: row;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--muted);
     }
 
-    .confetti-piece {
-      color: #ff69b4;
-      font-size: 2rem;
-      animation: burst 0.8s ease-in-out infinite;
+    .article-desc {
+      font-size: 0.82rem;
+      color: #d1d5db;
+      line-height: 1.4;
     }
 
-    @keyframes burst {
-      0% { transform: scale(0.5) rotate(0deg); opacity: 0; }
-      50% { transform: scale(1.8) rotate(180deg); opacity: 1; }
-      100% { transform: scale(1) rotate(360deg); opacity: 0; }
+    .article-link {
+      margin-top: 2px;
+      font-size: 0.8rem;
     }
 
-    #winner {
-      font-size: 2rem;
-      margin-top: 40px;
-      color: #ff69b4;
-      animation: explode 0.6s ease-in-out;
+    .article-link a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      padding-bottom: 1px;
     }
 
-    @keyframes explode {
-      0% { transform: scale(0); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
+    .article-link a:hover {
+      border-bottom-color: rgba(56, 189, 248, 0.6);
+    }
+
+    .articles-empty {
+      margin-top: 20px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: var(--radius-md);
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      padding: 14px;
+    }
+
+    .error-banner {
+      margin-top: 10px;
+      font-size: 0.78rem;
+      border-radius: var(--radius-md);
+      background: rgba(127, 29, 29, 0.9);
+      border: 1px solid rgba(248, 113, 113, 0.8);
+      color: #fee2e2;
+      padding: 8px 9px;
+    }
+
+    .error-banner strong {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.7rem;
+    }
+
+    .tiny-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .footer-note {
+      grid-column: 1 / -1;
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .footer-note a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .footer-note a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
-<body class="scanlines">
-  <div class="container" id="title-screen">
-    <h1>GULAG FIGHT SIMULATOR</h1>
-    <input type="text" id="fighter1" placeholder="Enter Fighter 1 Name" />
-    <input type="text" id="fighter2" placeholder="Enter Fighter 2 Name" />
-    <br />
-    <button onclick="startGame()">Enter the Gulag</button>
-  </div>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="app-title">
+        <div class="logo-dot"></div>
+        <div>
+          <h1>RSS Board</h1>
+          <span>Minimal RSS feed dashboard (static, GitHub Pages-friendly)</span>
+        </div>
+      </div>
+      <div class="app-badge">
+        <span>Client-side only · No backend</span>
+      </div>
+    </header>
 
-  <div class="container" id="countdown">
-    <h1 id="count">3</h1>
-  </div>
+    <!-- Left: feeds -->
+    <section class="column-card" aria-label="RSS feed configuration">
+      <div>
+        <h2>Feeds</h2>
+        <p class="subtitle">Add RSS URLs and click to view their latest posts.</p>
+      </div>
 
-  <div class="container" id="fight-log"></div>
-  <div class="container" id="winner"></div>
-  <div class="container" id="confetti"></div>
+      <form id="feed-form">
+        <div class="form-group">
+          <label for="feed-name">Feed name (optional)</label>
+          <input
+            type="text"
+            id="feed-name"
+            name="feedName"
+            placeholder="e.g. Hacker News front page"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-group">
+          <label for="feed-url">Feed URL</label>
+          <div class="input-row">
+            <input
+              type="url"
+              id="feed-url"
+              name="feedUrl"
+              placeholder="https://example.com/feed.xml"
+              required
+            />
+            <button type="submit">Add</button>
+          </div>
+          <p class="tiny-label">
+            Stored locally in your browser (<code>localStorage</code>).
+          </p>
+        </div>
+      </form>
+
+      <div class="feeds-list" id="feeds-list"></div>
+      <div class="feeds-empty" id="feeds-empty">
+        No feeds yet. Paste an RSS/Atom URL above and hit <strong>Add</strong>.
+      </div>
+
+      <div style="margin-top: 10px; display: flex; gap: 8px;">
+        <button type="button" class="btn-secondary" id="add-demo-feeds">
+          Load demo feeds
+        </button>
+        <button type="button" class="btn-secondary" id="clear-feeds">
+          Clear all
+        </button>
+      </div>
+    </section>
+
+    <!-- Right: articles -->
+    <section class="column-card" aria-label="Feed items">
+      <div class="articles-header">
+        <div class="articles-header-main">
+          <h2>Items</h2>
+          <div class="articles-feed-name" id="current-feed-name">
+            No feed selected
+          </div>
+          <div class="articles-feed-url" id="current-feed-url"></div>
+        </div>
+        <div class="status-pill" id="status-pill">
+          <span>Idle</span> <span id="status-detail">Select a feed</span>
+        </div>
+      </div>
+
+      <div id="error" class="error-banner" style="display: none;"></div>
+
+      <div class="articles-list" id="articles-list"></div>
+      <div class="articles-empty" id="articles-empty">
+        Select a feed on the left to fetch its latest items.  
+        <br /><br />
+        Note: some feeds may fail to load due to CORS restrictions in the browser.
+        This is normal for a static, client-only app.
+      </div>
+    </section>
+
+    <footer class="footer-note">
+      <span>Made for GitHub Pages. Just drop this <code>index.html</code> into your repo.</span>
+      <span>Tip: extend with a backend/Cloud Function if you want full CORS-safe fetching.</span>
+    </footer>
+  </div>
 
   <script>
-    const countdownEl = document.getElementById("count");
-    const countdownScreen = document.getElementById("countdown");
-    const titleScreen = document.getElementById("title-screen");
-    const fightLog = document.getElementById("fight-log");
-    const confetti = document.getElementById("confetti");
-    const winnerDiv = document.getElementById("winner");
+    (function () {
+      const STORAGE_KEY = "rss_board_feeds_v1";
 
-    let lines = [
-      "{ATTACKER} rips out {DEFENDER}'s teeth with a rusted wrench!",
-      "{ATTACKER} smashes {DEFENDER}'s kneecaps like glass marbles!",
-      "{ATTACKER} drives a nail through {DEFENDER}'s hand with a brick!",
-      "{ATTACKER} shoves {DEFENDER} face-first into a broken pipe!",
-      "{ATTACKER} ends it by choking {DEFENDER} out with torn wire!"
-    ];
+      const feedForm = document.getElementById("feed-form");
+      const feedNameInput = document.getElementById("feed-name");
+      const feedUrlInput = document.getElementById("feed-url");
+      const feedsListEl = document.getElementById("feeds-list");
+      const feedsEmptyEl = document.getElementById("feeds-empty");
+      const articlesListEl = document.getElementById("articles-list");
+      const articlesEmptyEl = document.getElementById("articles-empty");
+      const errorEl = document.getElementById("error");
+      const statusPill = document.getElementById("status-pill");
+      const statusDetail = document.getElementById("status-detail");
+      const currentFeedNameEl = document.getElementById("current-feed-name");
+      const currentFeedUrlEl = document.getElementById("current-feed-url");
+      const addDemoBtn = document.getElementById("add-demo-feeds");
+      const clearFeedsBtn = document.getElementById("clear-feeds");
 
-    function startGame() {
-      const name1 = document.getElementById("fighter1").value || "Fighter 1";
-      const name2 = document.getElementById("fighter2").value || "Fighter 2";
+      /** @type {{id:string,name:string,url:string}[]} */
+      let feeds = [];
+      let activeFeedId = null;
 
-      titleScreen.style.display = "none";
-      countdownScreen.style.display = "block";
-
-      let count = 3;
-      const interval = setInterval(() => {
-        if (count > 0) {
-          countdownEl.textContent = count;
-          count--;
-        } else {
-          clearInterval(interval);
-          countdownEl.textContent = "FIGHT!";
-          setTimeout(() => {
-            countdownScreen.style.display = "none";
-            startFight(name1, name2);
-          }, 1000);
+      function loadFeeds() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            feeds = parsed;
+          }
+        } catch (e) {
+          console.warn("Could not load feeds from storage", e);
         }
-      }, 1000);
-    }
+      }
 
-    function startFight(name1, name2) {
-      fightLog.style.display = "block";
-      let index = 0;
+      function saveFeeds() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(feeds));
+        } catch (e) {
+          console.warn("Could not save feeds to storage", e);
+        }
+      }
 
-      const fightInterval = setInterval(() => {
-        if (index < lines.length) {
-          const attacker = Math.random() > 0.5 ? name1 : name2;
-          const defender = attacker === name1 ? name2 : name1;
+      function renderFeeds() {
+        feedsListEl.innerHTML = "";
 
-          const line = lines[index]
-            .replace("{ATTACKER}", attacker)
-            .replace("{DEFENDER}", defender);
+        if (feeds.length === 0) {
+          feedsEmptyEl.style.display = "block";
+        } else {
+          feedsEmptyEl.style.display = "none";
+        }
 
-          const div = document.createElement("div");
-          div.className = "line newest";
-          div.textContent = line;
-
-          const previous = fightLog.querySelector(".newest");
-          if (previous) previous.classList.remove("newest");
-
-          fightLog.appendChild(div);
-          if (fightLog.children.length > 5) {
-            fightLog.removeChild(fightLog.children[0]);
+        feeds.forEach((feed) => {
+          const item = document.createElement("div");
+          item.className = "feed-item";
+          if (feed.id === activeFeedId) {
+            item.classList.add("active");
           }
 
-          index++;
-        } else {
-          clearInterval(fightInterval);
-          declareWinner(name1, name2);
-        }
-      }, 2000);
-    }
+          const main = document.createElement("div");
+          main.className = "feed-item-main";
 
-    function declareWinner(name1, name2) {
-      const winner = Math.random() > 0.5 ? name1 : name2;
-      winnerDiv.style.display = "block";
-      winnerDiv.textContent = `AND THE WINNER IS ${winner}!`;
-      confetti.style.display = "flex";
-      confetti.innerHTML = '';
+          const title = document.createElement("div");
+          title.className = "feed-item-title";
+          title.textContent = feed.name || "Untitled feed";
 
-      for (let i = 0; i < 100; i++) {
-        const span = document.createElement('span');
-        span.className = 'confetti-piece';
-        span.textContent = winner;
-        confetti.appendChild(span);
+          const url = document.createElement("div");
+          url.className = "feed-item-url";
+          url.textContent = feed.url;
+
+          main.appendChild(title);
+          main.appendChild(url);
+
+          const actions = document.createElement("div");
+          actions.className = "feed-item-actions";
+
+          const chip = document.createElement("span");
+          chip.className = "chip";
+          chip.innerHTML = '<span class="chip-dot"></span>Live';
+
+          const removeBtn = document.createElement("button");
+          removeBtn.className = "btn-icon";
+          removeBtn.type = "button";
+          removeBtn.textContent = "Remove";
+
+          removeBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            removeFeed(feed.id);
+          });
+
+          actions.appendChild(chip);
+          actions.appendChild(removeBtn);
+
+          item.appendChild(main);
+          item.appendChild(actions);
+
+          item.addEventListener("click", () => {
+            if (activeFeedId === feed.id) {
+              // toggle off
+              activeFeedId = null;
+              currentFeedNameEl.textContent = "No feed selected";
+              currentFeedUrlEl.textContent = "";
+              articlesListEl.innerHTML = "";
+              articlesEmptyEl.style.display = "block";
+              setStatus("Idle", "Select a feed");
+              errorEl.style.display = "none";
+            } else {
+              activeFeedId = feed.id;
+              currentFeedNameEl.textContent =
+                feed.name || "Untitled feed";
+              currentFeedUrlEl.textContent = feed.url;
+              fetchAndRenderFeed(feed.url);
+            }
+            renderFeeds();
+          });
+
+          feedsListEl.appendChild(item);
+        });
       }
-    }
+
+      function setStatus(label, detail) {
+        statusPill.querySelector("span").textContent = label;
+        statusDetail.textContent = detail;
+      }
+
+      function showError(message) {
+        errorEl.textContent = "";
+        const strong = document.createElement("strong");
+        strong.textContent = "Error ";
+        errorEl.appendChild(strong);
+        errorEl.appendChild(document.createTextNode(" " + message));
+        errorEl.style.display = "block";
+      }
+
+      function clearError() {
+        errorEl.style.display = "none";
+        errorEl.textContent = "";
+      }
+
+      function removeFeed(id) {
+        const idx = feeds.findIndex((f) => f.id === id);
+        if (idx === -1) return;
+        feeds.splice(idx, 1);
+        if (activeFeedId === id) {
+          activeFeedId = null;
+          currentFeedNameEl.textContent = "No feed selected";
+          currentFeedUrlEl.textContent = "";
+          articlesListEl.innerHTML = "";
+          articlesEmptyEl.style.display = "block";
+          setStatus("Idle", "Select a feed");
+          clearError();
+        }
+        saveFeeds();
+        renderFeeds();
+      }
+
+      function shortText(text, maxLen) {
+        if (!text) return "";
+        const trimmed = text.replace(/\s+/g, " ").trim();
+        if (trimmed.length <= maxLen) return trimmed;
+        return trimmed.slice(0, maxLen - 1) + "…";
+      }
+
+      function tryParseDate(dateStr) {
+        if (!dateStr) return null;
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return null;
+        return d.toLocaleString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      async function fetchAndRenderFeed(url) {
+        clearError();
+        setStatus("Loading", "Fetching feed…");
+        articlesListEl.innerHTML = "";
+        articlesEmptyEl.style.display = "none";
+
+        let xmlText;
+        try {
+          const res = await fetch(url);
+          if (!res.ok) {
+            throw new Error("HTTP " + res.status);
+          }
+          xmlText = await res.text();
+        } catch (err) {
+          console.error("Fetch error", err);
+          showError(
+            "Could not fetch feed. It may be blocking browsers (CORS) or the URL is invalid."
+          );
+          setStatus("Failed", "Fetch error");
+          articlesEmptyEl.style.display = "block";
+          return;
+        }
+
+        let doc;
+        try {
+          const parser = new DOMParser();
+          doc = parser.parseFromString(xmlText, "application/xml");
+
+          const parserError = doc.querySelector("parsererror");
+          if (parserError) {
+            throw new Error("Invalid XML");
+          }
+        } catch (err) {
+          console.error("Parse error", err);
+          showError("Could not parse RSS/Atom XML for this feed.");
+          setStatus("Failed", "Parse error");
+          articlesEmptyEl.style.display = "block";
+          return;
+        }
+
+        /** @type {{title:string,link:string,description:string,date:string|null}[]} */
+        const items = [];
+
+        // RSS style: <channel><item>…
+        const rssItems = Array.from(doc.querySelectorAll("channel > item"));
+        if (rssItems.length > 0) {
+          rssItems.forEach((item) => {
+            const title = item.querySelector("title")?.textContent || "Untitled";
+            const link = item.querySelector("link")?.textContent || "";
+            const description =
+              item.querySelector("description")?.textContent ||
+              item.querySelector("content\\:encoded")?.textContent ||
+              "";
+            const dateStr =
+              item.querySelector("pubDate")?.textContent ||
+              item.querySelector("dc\\:date")?.textContent ||
+              "";
+            items.push({
+              title: title.trim(),
+              link: link.trim(),
+              description: description.trim(),
+              date: tryParseDate(dateStr),
+            });
+          });
+        } else {
+          // Atom style: <feed><entry>…
+          const atomEntries = Array.from(doc.querySelectorAll("feed > entry"));
+          atomEntries.forEach((entry) => {
+            const title =
+              entry.querySelector("title")?.textContent || "Untitled";
+            const linkEl = entry.querySelector('link[rel="alternate"]') ||
+              entry.querySelector("link");
+            const link = linkEl?.getAttribute("href") || "";
+            const description =
+              entry.querySelector("summary")?.textContent ||
+              entry.querySelector("content")?.textContent ||
+              "";
+            const dateStr =
+              entry.querySelector("updated")?.textContent ||
+              entry.querySelector("published")?.textContent ||
+              "";
+            items.push({
+              title: title.trim(),
+              link: link.trim(),
+              description: description.trim(),
+              date: tryParseDate(dateStr),
+            });
+          });
+        }
+
+        if (items.length === 0) {
+          articlesEmptyEl.style.display = "block";
+          articlesEmptyEl.textContent =
+            "No items found in this feed. It might be an unsupported format.";
+          setStatus("Empty", "0 items");
+          return;
+        }
+
+        // Sort by date (if present)
+        items.sort((a, b) => {
+          if (!a.date && !b.date) return 0;
+          if (!a.date) return 1;
+          if (!b.date) return -1;
+          return new Date(b.date) - new Date(a.date);
+        });
+
+        articlesListEl.innerHTML = "";
+        items.slice(0, 30).forEach((item) => {
+          const card = document.createElement("article");
+          card.className = "article-card";
+
+          const titleRow = document.createElement("div");
+          titleRow.className = "article-title-row";
+
+          const title = document.createElement("h3");
+          title.textContent = item.title || "Untitled";
+
+          titleRow.appendChild(title);
+
+          const meta = document.createElement("div");
+          meta.className = "article-meta";
+
+          if (item.date) {
+            const dateSpan = document.createElement("span");
+            dateSpan.textContent = item.date;
+            meta.appendChild(dateSpan);
+          }
+
+          const desc = document.createElement("div");
+          desc.className = "article-desc";
+          desc.textContent = shortText(item.description, 260);
+
+          const link = document.createElement("div");
+          link.className = "article-link";
+
+          if (item.link) {
+            const a = document.createElement("a");
+            a.href = item.link;
+            a.textContent = "Open original";
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+            link.appendChild(a);
+          } else {
+            link.textContent = "No link available.";
+          }
+
+          card.appendChild(titleRow);
+          if (meta.childNodes.length > 0) {
+            card.appendChild(meta);
+          }
+          if (item.description) {
+            card.appendChild(desc);
+          }
+          card.appendChild(link);
+
+          articlesListEl.appendChild(card);
+        });
+
+        articlesEmptyEl.style.display = "none";
+        setStatus("Loaded", items.length + " items");
+      }
+
+      function addFeed(name, url) {
+        const trimmedUrl = (url || "").trim();
+        if (!trimmedUrl) return;
+        const existing = feeds.find(
+          (f) => f.url.toLowerCase() === trimmedUrl.toLowerCase()
+        );
+        if (existing) {
+          activeFeedId = existing.id;
+          currentFeedNameEl.textContent =
+            existing.name || "Untitled feed";
+          currentFeedUrlEl.textContent = existing.url;
+          fetchAndRenderFeed(existing.url);
+          renderFeeds();
+          return;
+        }
+        const id = "feed_" + Date.now() + "_" + Math.random().toString(16).slice(2);
+        const feed = {
+          id,
+          name: (name || "").trim(),
+          url: trimmedUrl,
+        };
+        feeds.unshift(feed);
+        saveFeeds();
+        activeFeedId = id;
+        currentFeedNameEl.textContent =
+          feed.name || "Untitled feed";
+        currentFeedUrlEl.textContent = feed.url;
+        renderFeeds();
+        fetchAndRenderFeed(feed.url);
+      }
+
+      function loadDemoFeeds() {
+        const demoFeeds = [
+          {
+            name: "Hacker News — Front Page",
+            url: "https://hnrss.org/frontpage",
+          },
+          {
+            name: "BBC News — World",
+            url: "https://feeds.bbci.co.uk/news/world/rss.xml",
+          },
+        ];
+        demoFeeds.forEach((demo) => addFeed(demo.name, demo.url));
+      }
+
+      // Event listeners
+      feedForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = feedNameInput.value;
+        const url = feedUrlInput.value;
+        if (!url) return;
+        addFeed(name, url);
+        feedUrlInput.value = "";
+        feedNameInput.value = "";
+        feedUrlInput.focus();
+      });
+
+      addDemoBtn.addEventListener("click", () => {
+        loadDemoFeeds();
+      });
+
+      clearFeedsBtn.addEventListener("click", () => {
+        if (!confirm("Clear all saved feeds?")) return;
+        feeds = [];
+        activeFeedId = null;
+        saveFeeds();
+        renderFeeds();
+        currentFeedNameEl.textContent = "No feed selected";
+        currentFeedUrlEl.textContent = "";
+        articlesListEl.innerHTML = "";
+        articlesEmptyEl.style.display = "block";
+        setStatus("Idle", "Select a feed");
+        clearError();
+      });
+
+      // Init
+      loadFeeds();
+      renderFeeds();
+      if (feeds.length > 0) {
+        // Optionally auto-select the first feed
+        const first = feeds[0];
+        activeFeedId = first.id;
+        currentFeedNameEl.textContent =
+          first.name || "Untitled feed";
+        currentFeedUrlEl.textContent = first.url;
+        renderFeeds();
+        fetchAndRenderFeed(first.url);
+      }
+    })();
   </script>
 </body>
 </html>
+
