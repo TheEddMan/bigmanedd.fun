@@ -415,265 +415,303 @@
   </main>
 
   <script>
-    (function () {
-      // ---- CONFIG: edit this array in code to change feeds ----
-      const FEEDS = [
+    <script>
+  (function () {
+    // ---- CONFIG: hard-coded feeds ----
+    const FEEDS = [
+      {
+        id: "securitycleared_cyber_gb",
+        name: "SecurityClearedJobs · Cyber Security (GB)",
+        url: "https://www.securityclearedjobs.com/jobsrss/?Sector=25&countrycode=GB",
+      },
+    ];
+
+    const feed = FEEDS[0]; // just using the first one for now
+
+    // UI elements
+    const statusLabelEl = document.getElementById("status-label");
+    const statusDetailEl = document.getElementById("status-detail");
+    const errorEl = document.getElementById("error");
+    const errorTextEl = document.getElementById("error-text");
+    const itemsContainer = document.getElementById("items-container");
+    const emptyStateEl = document.getElementById("empty-state");
+    const refreshBtn = document.getElementById("refresh-btn");
+    const openSourceBtn = document.getElementById("open-source-btn");
+    const feedNameEl = document.getElementById("feed-name");
+    const feedUrlEl = document.getElementById("feed-url");
+
+    // Set feed name/url in header
+    feedNameEl.textContent = feed.name;
+    feedUrlEl.textContent = feed.url;
+
+    function setStatus(label, detail) {
+      statusLabelEl.textContent = label;
+      statusDetailEl.textContent = detail;
+    }
+
+    function showError(message) {
+      errorTextEl.textContent = " " + message;
+      errorEl.style.display = "block";
+    }
+
+    function clearError() {
+      errorEl.style.display = "none";
+      errorTextEl.textContent = "";
+    }
+
+    function shortText(text, maxLen) {
+      if (!text) return "";
+      const trimmed = text.replace(/\s+/g, " ").trim();
+      if (trimmed.length <= maxLen) return trimmed;
+      return trimmed.slice(0, maxLen - 1) + "…";
+    }
+
+    function tryParseDate(dateStr) {
+      if (!dateStr) return null;
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return null;
+      return {
+        raw: d,
+        display: d.toLocaleString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+    }
+
+    /**
+     * Try multiple ways to fetch the feed:
+     *  1) Directly
+     *  2) via allorigins
+     *  3) via corsproxy.io
+     */
+    async function fetchFeedXml(url) {
+      const encoded = encodeURIComponent(url);
+      const attempts = [
+        { label: "direct", url: url },
         {
-          id: "securitycleared_cyber_gb",
-          name: "SecurityClearedJobs · Cyber Security (GB)",
-          url: "https://www.securityclearedjobs.com/jobsrss/?Sector=25&countrycode=GB",
+          label: "allorigins",
+          url: "https://api.allorigins.win/raw?url=" + encoded,
         },
-        // You can add more feeds here if you like.
-        // { id: "another", name: "Another Feed", url: "https://example.com/feed.xml" }
+        {
+          label: "corsproxy.io",
+          url: "https://corsproxy.io/?" + encoded,
+        },
       ];
 
-      const USE_CORS_PROXY = true;
-      const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+      let lastError = null;
 
-      const feed = FEEDS[0]; // Currently we just show the first feed.
-
-      const statusLabelEl = document.getElementById("status-label");
-      const statusDetailEl = document.getElementById("status-detail");
-      const errorEl = document.getElementById("error");
-      const errorTextEl = document.getElementById("error-text");
-      const itemsContainer = document.getElementById("items-container");
-      const emptyStateEl = document.getElementById("empty-state");
-      const refreshBtn = document.getElementById("refresh-btn");
-      const openSourceBtn = document.getElementById("open-source-btn");
-      const feedNameEl = document.getElementById("feed-name");
-      const feedUrlEl = document.getElementById("feed-url");
-
-      feedNameEl.textContent = feed.name;
-      feedUrlEl.textContent = feed.url;
-
-      function setStatus(label, detail) {
-        statusLabelEl.textContent = label;
-        statusDetailEl.textContent = detail;
-      }
-
-      function showError(message) {
-        errorTextEl.textContent = " " + message;
-        errorEl.style.display = "block";
-      }
-
-      function clearError() {
-        errorEl.style.display = "none";
-        errorTextEl.textContent = "";
-      }
-
-      function shortText(text, maxLen) {
-        if (!text) return "";
-        const trimmed = text.replace(/\s+/g, " ").trim();
-        if (trimmed.length <= maxLen) return trimmed;
-        return trimmed.slice(0, maxLen - 1) + "…";
-      }
-
-      function tryParseDate(dateStr) {
-        if (!dateStr) return null;
-        const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return null;
-        return {
-          raw: d,
-          display: d.toLocaleString(undefined, {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        };
-      }
-
-      async function loadFeed() {
-        clearError();
-        setStatus("Loading", "Fetching RSS feed…");
-        emptyStateEl.style.display = "block";
-        itemsContainer.innerHTML = "";
-        emptyStateEl.textContent =
-          "Loading the latest jobs from the RSS feed…";
-
-        let xmlText;
+      for (const attempt of attempts) {
         try {
-          const targetUrl = USE_CORS_PROXY
-            ? CORS_PROXY + encodeURIComponent(feed.url)
-            : feed.url;
-
-          const res = await fetch(targetUrl);
+          console.log("Trying fetch via:", attempt.label, attempt.url);
+          const res = await fetch(attempt.url);
           if (!res.ok) {
-            throw new Error("HTTP " + res.status);
+            throw new Error("HTTP " + res.status + " via " + attempt.label);
           }
-          xmlText = await res.text();
+          return await res.text();
         } catch (err) {
-          console.error("Fetch error", err);
-          showError(
-            "Could not fetch feed. The RSS source or the public CORS proxy may be down."
-          );
-          emptyStateEl.textContent =
-            "Failed to load the RSS feed. Try again later or open the raw RSS link.";
-          setStatus("Failed", "Fetch error");
-          return;
+          console.warn("Fetch failed via", attempt.label, err);
+          lastError = err;
+          // Go to next attempt
         }
-
-        let doc;
-        try {
-          const parser = new DOMParser();
-          doc = parser.parseFromString(xmlText, "application/xml");
-          const parserError = doc.querySelector("parsererror");
-          if (parserError) {
-            throw new Error("Invalid XML");
-          }
-        } catch (err) {
-          console.error("Parse error", err);
-          showError("Could not parse the RSS/Atom XML from this feed.");
-          emptyStateEl.textContent =
-            "The feed content could not be parsed. It may use an unsupported format.";
-          setStatus("Failed", "Parse error");
-          return;
-        }
-
-        /** @type {{title:string,link:string,description:string,dateObj:Date|null,dateDisplay:string|null}[]} */
-        const items = [];
-
-        // RSS-style: <channel><item>…
-        const rssItems = Array.from(doc.querySelectorAll("channel > item"));
-        if (rssItems.length > 0) {
-          rssItems.forEach((node) => {
-            const title =
-              node.querySelector("title")?.textContent || "Untitled";
-            const link =
-              node.querySelector("link")?.textContent ||
-              node.querySelector("guid")?.textContent ||
-              "";
-            const description =
-              node.querySelector("description")?.textContent ||
-              node.querySelector("content\\:encoded")?.textContent ||
-              "";
-            const dateStr =
-              node.querySelector("pubDate")?.textContent ||
-              node.querySelector("dc\\:date")?.textContent ||
-              "";
-            const date = tryParseDate(dateStr);
-            items.push({
-              title: title.trim(),
-              link: link.trim(),
-              description: description.trim(),
-              dateObj: date ? date.raw : null,
-              dateDisplay: date ? date.display : null,
-            });
-          });
-        } else {
-          // Atom-style: <feed><entry>…
-          const atomEntries = Array.from(doc.querySelectorAll("feed > entry"));
-          atomEntries.forEach((entry) => {
-            const title =
-              entry.querySelector("title")?.textContent || "Untitled";
-            const linkEl =
-              entry.querySelector('link[rel="alternate"]') ||
-              entry.querySelector("link");
-            const link = linkEl?.getAttribute("href") || "";
-            const description =
-              entry.querySelector("summary")?.textContent ||
-              entry.querySelector("content")?.textContent ||
-              "";
-            const dateStr =
-              entry.querySelector("updated")?.textContent ||
-              entry.querySelector("published")?.textContent ||
-              "";
-            const date = tryParseDate(dateStr);
-            items.push({
-              title: title.trim(),
-              link: link.trim(),
-              description: description.trim(),
-              dateObj: date ? date.raw : null,
-              dateDisplay: date ? date.display : null,
-            });
-          });
-        }
-
-        if (items.length === 0) {
-          emptyStateEl.style.display = "block";
-          emptyStateEl.textContent =
-            "No items found in this RSS feed. It may be empty or use an unsupported format.";
-          setStatus("Empty", "0 items");
-          return;
-        }
-
-        // Sort by date if we have it
-        items.sort((a, b) => {
-          if (!a.dateObj && !b.dateObj) return 0;
-          if (!a.dateObj) return 1;
-          if (!b.dateObj) return -1;
-          return b.dateObj - a.dateObj;
-        });
-
-        itemsContainer.innerHTML = "";
-        emptyStateEl.style.display = "none";
-
-        items.slice(0, 40).forEach((item) => {
-          const card = document.createElement("article");
-          card.className = "item-card";
-
-          const titleRow = document.createElement("div");
-          titleRow.className = "item-title-row";
-
-          const title = document.createElement("h2");
-          title.textContent = item.title || "Untitled";
-
-          titleRow.appendChild(title);
-
-          const meta = document.createElement("div");
-          meta.className = "item-meta";
-
-          if (item.dateDisplay) {
-            const dateSpan = document.createElement("span");
-            dateSpan.textContent = item.dateDisplay;
-            meta.appendChild(dateSpan);
-          }
-
-          const desc = document.createElement("div");
-          desc.className = "item-desc";
-          desc.textContent = shortText(item.description, 260);
-
-          const linkRow = document.createElement("div");
-          linkRow.className = "item-link";
-
-          if (item.link) {
-            const a = document.createElement("a");
-            a.href = item.link;
-            a.textContent = "View job / open original";
-            a.target = "_blank";
-            a.rel = "noopener noreferrer";
-            linkRow.appendChild(a);
-          } else {
-            linkRow.textContent = "No link available.";
-          }
-
-          card.appendChild(titleRow);
-          if (meta.childNodes.length > 0) {
-            card.appendChild(meta);
-          }
-          if (item.description) {
-            card.appendChild(desc);
-          }
-          card.appendChild(linkRow);
-
-          itemsContainer.appendChild(card);
-        });
-
-        setStatus("Loaded", items.length + " items");
       }
 
-      refreshBtn.addEventListener("click", () => {
-        loadFeed();
+      // If we get here, all attempts failed
+      throw new Error(
+        "All fetch methods failed (direct, allorigins, corsproxy.io). Last error: " +
+          (lastError ? lastError.message : "unknown")
+      );
+    }
+
+    async function loadFeed() {
+      clearError();
+      setStatus("Loading", "Fetching RSS feed…");
+      emptyStateEl.style.display = "block";
+      itemsContainer.innerHTML = "";
+      emptyStateEl.textContent =
+        "Loading the latest jobs from the RSS feed…";
+
+      let xmlText;
+      try {
+        xmlText = await fetchFeedXml(feed.url);
+      } catch (err) {
+        console.error("Fetch error (all methods)", err);
+        showError(
+          "Could not fetch feed. We tried direct + two public CORS proxies. " +
+            "The RSS source or the proxies may be blocking requests."
+        );
+        emptyStateEl.textContent =
+          "Failed to load the RSS feed after multiple attempts. " +
+          "You can still open the raw RSS link above.";
+        setStatus("Failed", "Fetch error");
+        return;
+      }
+
+      let doc;
+      try {
+        const parser = new DOMParser();
+        doc = parser.parseFromString(xmlText, "application/xml");
+        const parserError = doc.querySelector("parsererror");
+        if (parserError) {
+          throw new Error("Invalid XML");
+        }
+      } catch (err) {
+        console.error("Parse error", err);
+        showError("Could not parse the RSS/Atom XML from this feed.");
+        emptyStateEl.textContent =
+          "The feed content could not be parsed. It may use an unsupported format.";
+        setStatus("Failed", "Parse error");
+        return;
+      }
+
+      /** @type {{title:string,link:string,description:string,dateObj:Date|null,dateDisplay:string|null}[]} */
+      const items = [];
+
+      // RSS-style: <channel><item>…
+      const rssItems = Array.from(doc.querySelectorAll("channel > item"));
+      if (rssItems.length > 0) {
+        rssItems.forEach((node) => {
+          const title =
+            node.querySelector("title")?.textContent || "Untitled";
+          const link =
+            node.querySelector("link")?.textContent ||
+            node.querySelector("guid")?.textContent ||
+            "";
+          const description =
+            node.querySelector("description")?.textContent ||
+            node.querySelector("content\\:encoded")?.textContent ||
+            "";
+          const dateStr =
+            node.querySelector("pubDate")?.textContent ||
+            node.querySelector("dc\\:date")?.textContent ||
+            "";
+          const date = tryParseDate(dateStr);
+          items.push({
+            title: title.trim(),
+            link: link.trim(),
+            description: description.trim(),
+            dateObj: date ? date.raw : null,
+            dateDisplay: date ? date.display : null,
+          });
+        });
+      } else {
+        // Atom-style: <feed><entry>…
+        const atomEntries = Array.from(doc.querySelectorAll("feed > entry"));
+        atomEntries.forEach((entry) => {
+          const title =
+            entry.querySelector("title")?.textContent || "Untitled";
+          const linkEl =
+            entry.querySelector('link[rel="alternate"]') ||
+            entry.querySelector("link");
+          const link = linkEl?.getAttribute("href") || "";
+          const description =
+            entry.querySelector("summary")?.textContent ||
+            entry.querySelector("content")?.textContent ||
+            "";
+          const dateStr =
+            entry.querySelector("updated")?.textContent ||
+            entry.querySelector("published")?.textContent ||
+            "";
+          const date = tryParseDate(dateStr);
+          items.push({
+            title: title.trim(),
+            link: link.trim(),
+            description: description.trim(),
+            dateObj: date ? date.raw : null,
+            dateDisplay: date ? date.display : null,
+          });
+        });
+      }
+
+      if (items.length === 0) {
+        emptyStateEl.style.display = "block";
+        emptyStateEl.textContent =
+          "No items found in this RSS feed. It may be empty or use an unsupported format.";
+        setStatus("Empty", "0 items");
+        return;
+      }
+
+      // Sort by date if we have it
+      items.sort((a, b) => {
+        if (!a.dateObj && !b.dateObj) return 0;
+        if (!a.dateObj) return 1;
+        if (!b.dateObj) return -1;
+        return b.dateObj - a.dateObj;
       });
 
-      openSourceBtn.addEventListener("click", () => {
-        window.open(feed.url, "_blank", "noopener,noreferrer");
+      itemsContainer.innerHTML = "";
+      emptyStateEl.style.display = "none";
+
+      items.slice(0, 40).forEach((item) => {
+        const card = document.createElement("article");
+        card.className = "item-card";
+
+        const titleRow = document.createElement("div");
+        titleRow.className = "item-title-row";
+
+        const title = document.createElement("h2");
+        title.textContent = item.title || "Untitled";
+
+        titleRow.appendChild(title);
+
+        const meta = document.createElement("div");
+        meta.className = "item-meta";
+
+        if (item.dateDisplay) {
+          const dateSpan = document.createElement("span");
+          dateSpan.textContent = item.dateDisplay;
+          meta.appendChild(dateSpan);
+        }
+
+        const desc = document.createElement("div");
+        desc.className = "item-desc";
+        desc.textContent = shortText(item.description, 260);
+
+        const linkRow = document.createElement("div");
+        linkRow.className = "item-link";
+
+        if (item.link) {
+          const a = document.createElement("a");
+          a.href = item.link;
+          a.textContent = "View job / open original";
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          linkRow.appendChild(a);
+        } else {
+          linkRow.textContent = "No link available.";
+        }
+
+        card.appendChild(titleRow);
+        if (meta.childNodes.length > 0) {
+          card.appendChild(meta);
+        }
+        if (item.description) {
+          card.appendChild(desc);
+        }
+        card.appendChild(linkRow);
+
+        itemsContainer.appendChild(card);
       });
 
-      // Initial load
+      setStatus("Loaded", items.length + " items");
+    }
+
+    // Buttons
+    refreshBtn.addEventListener("click", () => {
       loadFeed();
-    })();
-  </script>
+    });
+
+    openSourceBtn.addEventListener("click", () => {
+      window.open(feed.url, "_blank", "noopener,noreferrer");
+    });
+
+    // Initial load
+    loadFeed();
+  })();
+</script>
 </body>
 </html>
+
