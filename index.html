@@ -2,716 +2,324 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Cyber Security Jobs – RSS Viewer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --bg: #020617;
-      --bg-card: #020617;
-      --bg-soft: #020617;
-      --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.15);
-      --text: #e5e7eb;
-      --muted: #9ca3af;
-      --border: #1f2937;
-      --radius-lg: 18px;
-      --radius-md: 10px;
-    }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nineteen Forever | Official Site</title>
 
+  <style>
+    /* ===== Base Layout ===== */
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         sans-serif;
-      background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
-      color: var(--text);
+      background: radial-gradient(circle at top, #101122 0, #020308 55%, #000 100%);
+      color: #f7f7ff;
       display: flex;
+      align-items: center;
       justify-content: center;
-      padding: 24px 12px;
     }
 
-    .app {
+    .page {
       width: 100%;
-      max-width: 980px;
-      background: rgba(15, 23, 42, 0.96);
-      border-radius: 26px;
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.9);
-      padding: 20px 20px 18px;
-      backdrop-filter: blur(18px);
+      max-width: 960px;
+      padding: 2.5rem 1.5rem 1.75rem;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-    }
-
-    header {
-      display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+      gap: 2rem;
+      min-height: 100vh;
     }
 
-    .title-block {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo-dot {
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 25% 20%, #e0f2fe, #38bdf8);
-      box-shadow: 0 0 30px rgba(56, 189, 248, 0.75);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 1.2rem;
-      letter-spacing: 0.04em;
-    }
-
-    .subtitle {
-      margin: 2px 0 0;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .badge {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    .feed-meta {
+    .hero {
+      text-align: center;
+      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      margin-top: 4px;
-      padding: 10px 12px;
-      border-radius: var(--radius-lg);
-      background: radial-gradient(
-          circle at top left,
-          rgba(56, 189, 248, 0.1),
-          transparent 60%
-        ),
-        rgba(15, 23, 42, 0.96);
-      border: 1px solid rgba(148, 163, 184, 0.35);
-    }
-
-    .feed-name {
-      font-size: 0.92rem;
-      font-weight: 500;
-    }
-
-    .feed-url {
-      font-size: 0.8rem;
-      color: var(--muted);
-      word-break: break-all;
-    }
-
-    .status-row {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      margin-top: 4px;
+      justify-content: center;
+      gap: 1.5rem;
     }
 
-    .status-pill {
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--muted);
+    /* ===== Neon Logo ===== */
+
+    .logo-wrapper {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-
-    .status-pill span:first-child {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-    }
-
-    .status-pill-dot {
-      width: 8px;
-      height: 8px;
+      justify-content: center;
+      padding: 1.75rem 2.5rem;
       border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
-    }
-
-    button {
-      font-size: 0.82rem;
-      border-radius: 999px;
-      border: none;
-      padding: 7px 13px;
+      position: relative;
       cursor: pointer;
-      background: linear-gradient(135deg, #0ea5e9, #38bdf8);
-      color: #020617;
-      font-weight: 600;
-      letter-spacing: 0.06em;
+      /* main neon ring */
+      border: 3px solid rgba(0, 255, 255, 0.9);
+      box-shadow:
+        0 0 8px rgba(0, 255, 255, 0.9),
+        0 0 22px rgba(0, 180, 255, 0.9),
+        0 0 48px rgba(0, 120, 255, 0.7);
+      animation: neon-flicker 2.2s linear both;
+    }
+
+    /* extra circle glow */
+    .logo-wrapper::before {
+      content: "";
+      position: absolute;
+      inset: -16px;
+      border-radius: inherit;
+      border: 2px solid rgba(255, 0, 150, 0.28);
+      filter: blur(2px);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .logo {
+      font-size: clamp(2.4rem, 6vw, 3.4rem);
+      line-height: 1.1;
+      font-weight: 700;
       text-transform: uppercase;
-      transition: transform 0.08s ease, box-shadow 0.08s ease,
-        filter 0.08s ease;
-      white-space: nowrap;
+      letter-spacing: 0.18em;
+      color: #ff2fbf;
+      text-shadow:
+        0 0 5px #ff2fbf,
+        0 0 11px #ff2fbf,
+        0 0 20px #ff2fbf,
+        0 0 36px #ff007a,
+        0 0 60px #ff007a;
+      transition:
+        color 0.25s ease-out,
+        text-shadow 0.25s ease-out,
+        transform 0.2s ease-out;
+      animation: neon-flicker 2.2s linear both;
+      animation-delay: 0.05s;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 28px rgba(56, 189, 248, 0.4);
-      filter: brightness(1.04);
+    .logo span {
+      display: block;
+      font-size: 0.85em;
     }
 
-    button:active {
-      transform: translateY(0.3px) scale(0.99);
-      box-shadow: none;
+    /* Hover colour change */
+    .logo-wrapper:hover .logo {
+      color: #40f5ff;
+      text-shadow:
+        0 0 6px #40f5ff,
+        0 0 14px #40f5ff,
+        0 0 26px #00c8ff,
+        0 0 46px #00c8ff,
+        0 0 80px #00c8ff;
+      transform: scale(1.03);
     }
 
-    .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid rgba(148, 163, 184, 0.6);
+    .tagline {
+      font-size: clamp(1rem, 2.4vw, 1.15rem);
+      opacity: 0.9;
+      max-width: 32rem;
     }
 
-    .btn-ghost:hover {
-      background: rgba(15, 23, 42, 0.96);
-      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.9);
-      filter: none;
-      color: #e5e7eb;
-    }
-
-    .proxy-note {
-      margin-top: 6px;
-      font-size: 0.76rem;
-      color: var(--muted);
-    }
-
-    .proxy-note code {
-      font-size: 0.74rem;
-      background: rgba(15, 23, 42, 0.9);
-      padding: 2px 5px;
-      border-radius: 6px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-    }
-
-    .error-banner {
-      margin-top: 8px;
-      font-size: 0.78rem;
-      border-radius: var(--radius-md);
-      background: rgba(127, 29, 29, 0.95);
-      border: 1px solid rgba(248, 113, 113, 0.9);
-      color: #fee2e2;
-      padding: 8px 9px;
-      display: none;
-    }
-
-    .error-banner strong {
-      text-transform: uppercase;
+    .meta {
+      font-size: 0.9rem;
+      opacity: 0.7;
       letter-spacing: 0.08em;
-      font-size: 0.72rem;
+      text-transform: uppercase;
     }
 
-    .list-card {
-      margin-top: 4px;
-      padding: 12px;
-      border-radius: var(--radius-lg);
-      background: radial-gradient(
-          circle at top left,
-          rgba(56, 189, 248, 0.07),
-          transparent 55%
-        ),
-        var(--bg-card);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      max-height: 480px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .empty-state {
-      font-size: 0.84rem;
-      color: var(--muted);
-      padding: 14px 10px;
-      border-radius: var(--radius-md);
-      border: 1px dashed rgba(148, 163, 184, 0.7);
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    .item-card {
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(148, 163, 184, 0.55);
-      padding: 9px 10px;
-      background: radial-gradient(
-          circle at top left,
-          rgba(56, 189, 248, 0.12),
-          transparent 50%
-        ),
-        rgba(15, 23, 42, 0.98);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      transition: transform 0.08s ease, box-shadow 0.08s ease,
-        border-color 0.08s ease;
-    }
-
-    .item-card:hover {
-      transform: translateY(-1px);
-      border-color: rgba(56, 189, 248, 0.9);
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.95);
-    }
-
-    .item-title-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      align-items: flex-start;
-    }
-
-    .item-title-row h2 {
-      margin: 0;
-      font-size: 0.95rem;
-      line-height: 1.3;
-    }
-
-    .item-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      font-size: 0.74rem;
-      color: var(--muted);
-    }
-
-    .item-desc {
-      font-size: 0.82rem;
-      color: #d1d5db;
-      line-height: 1.4;
-    }
-
-    .item-link a {
-      font-size: 0.8rem;
-      color: var(--accent);
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-      padding-bottom: 1px;
-    }
-
-    .item-link a:hover {
-      border-bottom-color: rgba(56, 189, 248, 0.7);
-    }
+    /* ===== Socials Footer ===== */
 
     footer {
-      margin-top: 6px;
-      font-size: 0.74rem;
-      color: var(--muted);
+      width: 100%;
       display: flex;
-      justify-content: space-between;
-      gap: 10px;
+      flex-direction: column;
       align-items: center;
-      border-top: 1px solid rgba(31, 41, 55, 0.9);
-      padding-top: 8px;
+      gap: 0.9rem;
+      padding-bottom: 0.5rem;
     }
 
-    footer code {
-      font-size: 0.74rem;
+    .socials {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
-    @media (max-width: 700px) {
-      .app {
-        padding: 16px;
+    .social-link {
+      text-decoration: none;
+      position: relative;
+    }
+
+    .social-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 255, 180, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #00ffd0;
+      box-shadow:
+        0 0 4px #00ffd0,
+        0 0 12px rgba(0, 255, 208, 0.85),
+        0 0 22px rgba(0, 180, 255, 0.7);
+      text-shadow:
+        0 0 4px #00ffd0,
+        0 0 10px rgba(0, 255, 208, 0.9);
+      transition:
+        transform 0.18s ease-out,
+        box-shadow 0.18s ease-out,
+        color 0.18s ease-out,
+        border-color 0.18s ease-out;
+      animation: neon-flicker 2.2s linear both;
+      animation-delay: 0.25s;
+    }
+
+    .social-link:hover .social-icon {
+      transform: translateY(-2px) scale(1.05);
+      border-color: #ffde59;
+      color: #ffde59;
+      box-shadow:
+        0 0 6px #ffde59,
+        0 0 16px #ffde59,
+        0 0 30px rgba(255, 170, 50, 0.95);
+    }
+
+    .credits {
+      font-size: 0.75rem;
+      opacity: 0.45;
+    }
+
+    /* ===== Neon Flicker Animation (on page load) ===== */
+
+    @keyframes neon-flicker {
+      0% {
+        opacity: 0;
+        filter: brightness(0.4);
       }
-      header {
-        flex-direction: column;
-        align-items: flex-start;
+      5% {
+        opacity: 1;
       }
-      footer {
-        flex-direction: column;
-        align-items: flex-start;
+      12% {
+        opacity: 0.2;
+      }
+      18% {
+        opacity: 1;
+      }
+      26% {
+        opacity: 0.1;
+      }
+      32% {
+        opacity: 1;
+      }
+      45% {
+        opacity: 0.4;
+      }
+      55% {
+        opacity: 1;
+        filter: brightness(0.9);
+      }
+      72% {
+        opacity: 0.7;
+      }
+      100% {
+        opacity: 1;
+        filter: brightness(1);
+      }
+    }
+
+    /* ===== Responsiveness ===== */
+
+    @media (max-width: 600px) {
+      .page {
+        padding-inline: 1.2rem;
+        gap: 1.75rem;
+      }
+
+      .logo-wrapper {
+        padding: 1.4rem 1.8rem;
+      }
+
+      .social-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
       }
     }
   </style>
 </head>
+
 <body>
-  <main class="app">
-    <header>
-      <div class="title-block">
-        <div class="logo-dot"></div>
-        <div>
-          <h1>Cyber Security Jobs — RSS</h1>
-          <p class="subtitle">
-            Static GitHub Pages site reading a hard-coded RSS feed.
-          </p>
-        </div>
-      </div>
-      <div class="badge">Client-Side · No backend</div>
-    </header>
+  <div class="page">
+    <main class="hero">
+      <p class="meta">Indie / Alternative · 4-Piece Cover Band</p>
 
-    <section class="feed-meta">
-      <div class="feed-name" id="feed-name">
-        SecurityClearedJobs · Cyber Security (GB)
-      </div>
-      <div class="feed-url" id="feed-url">
-        https://www.securityclearedjobs.com/jobsrss/?Sector=25&amp;countrycode=GB
-      </div>
-
-      <div class="status-row">
-        <div class="status-pill">
-          <span id="status-label">Idle</span>
-          <span class="status-pill-dot"></span>
-          <span id="status-detail">Waiting to load feed</span>
-        </div>
-        <div style="display:flex; gap:8px;">
-          <button type="button" id="refresh-btn">Refresh</button>
-          <button type="button" class="btn-ghost" id="open-source-btn">
-            Open RSS
-          </button>
+      <!-- LOGO AREA -->
+      <!-- Replace the .logo text with an <img> if you want to use your generated logo image instead:
+           <img src="images/nineteen-forever-logo.png" alt="Nineteen Forever logo" class="logo-img" />
+           and tweak styles as needed. -->
+      <div class="logo-wrapper">
+        <div class="logo">
+          Nineteen
+          <span>Forever</span>
         </div>
       </div>
 
-      <p class="proxy-note">
-        Feed requests are routed via a public CORS proxy
-        <code>https://api.allorigins.win</code> so this works on GitHub Pages.
+      <p class="tagline">
+        Neon-lit indie anthems for the late-night crowd. Pubs, parties & all-night sing-alongs.
       </p>
-
-      <div class="error-banner" id="error">
-        <strong>ERROR</strong> <span id="error-text"></span>
-      </div>
-    </section>
-
-    <section class="list-card" aria-label="RSS items">
-      <div class="empty-state" id="empty-state">
-        Loading the latest jobs from the RSS feed…  
-        If nothing appears, the feed or the public proxy may be temporarily
-        unavailable.
-      </div>
-      <div id="items-container"></div>
-    </section>
+    </main>
 
     <footer>
-      <span>
-        Feeds are hard-coded in <code>index.html</code>
-        (<code>FEEDS</code> array in the script).
-      </span>
-      <span>
-        Add more feeds by editing the code — no UI to add/remove feeds.
-      </span>
+      <div class="socials">
+        <!-- Add your real links in the href attributes -->
+        <a
+          class="social-link"
+          href="https://facebook.com/yourband"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div class="social-icon">f</div>
+        </a>
+
+        <a
+          class="social-link"
+          href="https://instagram.com/yourband"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div class="social-icon">ig</div>
+        </a>
+
+        <a
+          class="social-link"
+          href="https://youtube.com/@yourband"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div class="social-icon">▶</div>
+        </a>
+
+        <a
+          class="social-link"
+          href="mailto:youremail@band.com"
+        >
+          <div class="social-icon">✉</div>
+        </a>
+      </div>
+
+      <p class="credits">© <span id="year"></span> Nineteen Forever · All rights reserved.</p>
     </footer>
-  </main>
+  </div>
 
+  <!-- Small script only to keep the year current -->
   <script>
-    <script>
-  (function () {
-    // ---- CONFIG: hard-coded feeds ----
-    const FEEDS = [
-      {
-        id: "securitycleared_cyber_gb",
-        name: "SecurityClearedJobs · Cyber Security (GB)",
-        url: "https://www.securityclearedjobs.com/jobsrss/?Sector=25&countrycode=GB",
-      },
-    ];
-
-    const feed = FEEDS[0]; // just using the first one for now
-
-    // UI elements
-    const statusLabelEl = document.getElementById("status-label");
-    const statusDetailEl = document.getElementById("status-detail");
-    const errorEl = document.getElementById("error");
-    const errorTextEl = document.getElementById("error-text");
-    const itemsContainer = document.getElementById("items-container");
-    const emptyStateEl = document.getElementById("empty-state");
-    const refreshBtn = document.getElementById("refresh-btn");
-    const openSourceBtn = document.getElementById("open-source-btn");
-    const feedNameEl = document.getElementById("feed-name");
-    const feedUrlEl = document.getElementById("feed-url");
-
-    // Set feed name/url in header
-    feedNameEl.textContent = feed.name;
-    feedUrlEl.textContent = feed.url;
-
-    function setStatus(label, detail) {
-      statusLabelEl.textContent = label;
-      statusDetailEl.textContent = detail;
-    }
-
-    function showError(message) {
-      errorTextEl.textContent = " " + message;
-      errorEl.style.display = "block";
-    }
-
-    function clearError() {
-      errorEl.style.display = "none";
-      errorTextEl.textContent = "";
-    }
-
-    function shortText(text, maxLen) {
-      if (!text) return "";
-      const trimmed = text.replace(/\s+/g, " ").trim();
-      if (trimmed.length <= maxLen) return trimmed;
-      return trimmed.slice(0, maxLen - 1) + "…";
-    }
-
-    function tryParseDate(dateStr) {
-      if (!dateStr) return null;
-      const d = new Date(dateStr);
-      if (isNaN(d.getTime())) return null;
-      return {
-        raw: d,
-        display: d.toLocaleString(undefined, {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      };
-    }
-
-    /**
-     * Try multiple ways to fetch the feed:
-     *  1) Directly
-     *  2) via allorigins
-     *  3) via corsproxy.io
-     */
-    async function fetchFeedXml(url) {
-      const encoded = encodeURIComponent(url);
-      const attempts = [
-        { label: "direct", url: url },
-        {
-          label: "allorigins",
-          url: "https://api.allorigins.win/raw?url=" + encoded,
-        },
-        {
-          label: "corsproxy.io",
-          url: "https://corsproxy.io/?" + encoded,
-        },
-      ];
-
-      let lastError = null;
-
-      for (const attempt of attempts) {
-        try {
-          console.log("Trying fetch via:", attempt.label, attempt.url);
-          const res = await fetch(attempt.url);
-          if (!res.ok) {
-            throw new Error("HTTP " + res.status + " via " + attempt.label);
-          }
-          return await res.text();
-        } catch (err) {
-          console.warn("Fetch failed via", attempt.label, err);
-          lastError = err;
-          // Go to next attempt
-        }
-      }
-
-      // If we get here, all attempts failed
-      throw new Error(
-        "All fetch methods failed (direct, allorigins, corsproxy.io). Last error: " +
-          (lastError ? lastError.message : "unknown")
-      );
-    }
-
-    async function loadFeed() {
-      clearError();
-      setStatus("Loading", "Fetching RSS feed…");
-      emptyStateEl.style.display = "block";
-      itemsContainer.innerHTML = "";
-      emptyStateEl.textContent =
-        "Loading the latest jobs from the RSS feed…";
-
-      let xmlText;
-      try {
-        xmlText = await fetchFeedXml(feed.url);
-      } catch (err) {
-        console.error("Fetch error (all methods)", err);
-        showError(
-          "Could not fetch feed. We tried direct + two public CORS proxies. " +
-            "The RSS source or the proxies may be blocking requests."
-        );
-        emptyStateEl.textContent =
-          "Failed to load the RSS feed after multiple attempts. " +
-          "You can still open the raw RSS link above.";
-        setStatus("Failed", "Fetch error");
-        return;
-      }
-
-      let doc;
-      try {
-        const parser = new DOMParser();
-        doc = parser.parseFromString(xmlText, "application/xml");
-        const parserError = doc.querySelector("parsererror");
-        if (parserError) {
-          throw new Error("Invalid XML");
-        }
-      } catch (err) {
-        console.error("Parse error", err);
-        showError("Could not parse the RSS/Atom XML from this feed.");
-        emptyStateEl.textContent =
-          "The feed content could not be parsed. It may use an unsupported format.";
-        setStatus("Failed", "Parse error");
-        return;
-      }
-
-      /** @type {{title:string,link:string,description:string,dateObj:Date|null,dateDisplay:string|null}[]} */
-      const items = [];
-
-      // RSS-style: <channel><item>…
-      const rssItems = Array.from(doc.querySelectorAll("channel > item"));
-      if (rssItems.length > 0) {
-        rssItems.forEach((node) => {
-          const title =
-            node.querySelector("title")?.textContent || "Untitled";
-          const link =
-            node.querySelector("link")?.textContent ||
-            node.querySelector("guid")?.textContent ||
-            "";
-          const description =
-            node.querySelector("description")?.textContent ||
-            node.querySelector("content\\:encoded")?.textContent ||
-            "";
-          const dateStr =
-            node.querySelector("pubDate")?.textContent ||
-            node.querySelector("dc\\:date")?.textContent ||
-            "";
-          const date = tryParseDate(dateStr);
-          items.push({
-            title: title.trim(),
-            link: link.trim(),
-            description: description.trim(),
-            dateObj: date ? date.raw : null,
-            dateDisplay: date ? date.display : null,
-          });
-        });
-      } else {
-        // Atom-style: <feed><entry>…
-        const atomEntries = Array.from(doc.querySelectorAll("feed > entry"));
-        atomEntries.forEach((entry) => {
-          const title =
-            entry.querySelector("title")?.textContent || "Untitled";
-          const linkEl =
-            entry.querySelector('link[rel="alternate"]') ||
-            entry.querySelector("link");
-          const link = linkEl?.getAttribute("href") || "";
-          const description =
-            entry.querySelector("summary")?.textContent ||
-            entry.querySelector("content")?.textContent ||
-            "";
-          const dateStr =
-            entry.querySelector("updated")?.textContent ||
-            entry.querySelector("published")?.textContent ||
-            "";
-          const date = tryParseDate(dateStr);
-          items.push({
-            title: title.trim(),
-            link: link.trim(),
-            description: description.trim(),
-            dateObj: date ? date.raw : null,
-            dateDisplay: date ? date.display : null,
-          });
-        });
-      }
-
-      if (items.length === 0) {
-        emptyStateEl.style.display = "block";
-        emptyStateEl.textContent =
-          "No items found in this RSS feed. It may be empty or use an unsupported format.";
-        setStatus("Empty", "0 items");
-        return;
-      }
-
-      // Sort by date if we have it
-      items.sort((a, b) => {
-        if (!a.dateObj && !b.dateObj) return 0;
-        if (!a.dateObj) return 1;
-        if (!b.dateObj) return -1;
-        return b.dateObj - a.dateObj;
-      });
-
-      itemsContainer.innerHTML = "";
-      emptyStateEl.style.display = "none";
-
-      items.slice(0, 40).forEach((item) => {
-        const card = document.createElement("article");
-        card.className = "item-card";
-
-        const titleRow = document.createElement("div");
-        titleRow.className = "item-title-row";
-
-        const title = document.createElement("h2");
-        title.textContent = item.title || "Untitled";
-
-        titleRow.appendChild(title);
-
-        const meta = document.createElement("div");
-        meta.className = "item-meta";
-
-        if (item.dateDisplay) {
-          const dateSpan = document.createElement("span");
-          dateSpan.textContent = item.dateDisplay;
-          meta.appendChild(dateSpan);
-        }
-
-        const desc = document.createElement("div");
-        desc.className = "item-desc";
-        desc.textContent = shortText(item.description, 260);
-
-        const linkRow = document.createElement("div");
-        linkRow.className = "item-link";
-
-        if (item.link) {
-          const a = document.createElement("a");
-          a.href = item.link;
-          a.textContent = "View job / open original";
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-          linkRow.appendChild(a);
-        } else {
-          linkRow.textContent = "No link available.";
-        }
-
-        card.appendChild(titleRow);
-        if (meta.childNodes.length > 0) {
-          card.appendChild(meta);
-        }
-        if (item.description) {
-          card.appendChild(desc);
-        }
-        card.appendChild(linkRow);
-
-        itemsContainer.appendChild(card);
-      });
-
-      setStatus("Loaded", items.length + " items");
-    }
-
-    // Buttons
-    refreshBtn.addEventListener("click", () => {
-      loadFeed();
-    });
-
-    openSourceBtn.addEventListener("click", () => {
-      window.open(feed.url, "_blank", "noopener,noreferrer");
-    });
-
-    // Initial load
-    loadFeed();
-  })();
-</script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
-
