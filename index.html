@@ -47,7 +47,7 @@
       gap: 1.5rem;
     }
 
-    /* ===== Neon Logo ===== */
+    /* ===== Neon Logo Wrapper ===== */
 
     .logo-wrapper {
       display: inline-flex;
@@ -57,7 +57,6 @@
       border-radius: 999px;
       position: relative;
       cursor: pointer;
-      /* main neon ring */
       border: 3px solid rgba(0, 255, 255, 0.9);
       box-shadow:
         0 0 8px rgba(0, 255, 255, 0.9),
@@ -66,7 +65,6 @@
       animation: neon-flicker 2.2s linear both;
     }
 
-    /* extra circle glow */
     .logo-wrapper::before {
       content: "";
       position: absolute;
@@ -78,42 +76,24 @@
       pointer-events: none;
     }
 
-    .logo {
-      font-size: clamp(2.4rem, 6vw, 3.4rem);
-      line-height: 1.1;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: #ff2fbf;
-      text-shadow:
-        0 0 5px #ff2fbf,
-        0 0 11px #ff2fbf,
-        0 0 20px #ff2fbf,
-        0 0 36px #ff007a,
-        0 0 60px #ff007a;
-      transition:
-        color 0.25s ease-out,
-        text-shadow 0.25s ease-out,
-        transform 0.2s ease-out;
+    /* Logo image */
+    .logo-img {
+      width: clamp(260px, 55vw, 420px);
+      height: auto;
+      display: block;
+      transition: filter 0.25s ease-out, transform 0.25s ease-out;
       animation: neon-flicker 2.2s linear both;
       animation-delay: 0.05s;
     }
 
-    .logo span {
-      display: block;
-      font-size: 0.85em;
-    }
-
-    /* Hover colour change */
-    .logo-wrapper:hover .logo {
-      color: #40f5ff;
-      text-shadow:
-        0 0 6px #40f5ff,
-        0 0 14px #40f5ff,
-        0 0 26px #00c8ff,
-        0 0 46px #00c8ff,
-        0 0 80px #00c8ff;
-      transform: scale(1.03);
+    /* Hover color-shift effect (tint) */
+    .logo-wrapper:hover .logo-img {
+      filter:
+        drop-shadow(0 0 6px #40f5ff)
+        drop-shadow(0 0 14px #40f5ff)
+        drop-shadow(0 0 26px #00c8ff)
+        hue-rotate(45deg);
+      transform: scale(1.04);
     }
 
     .tagline {
@@ -171,11 +151,7 @@
       text-shadow:
         0 0 4px #00ffd0,
         0 0 10px rgba(0, 255, 208, 0.9);
-      transition:
-        transform 0.18s ease-out,
-        box-shadow 0.18s ease-out,
-        color 0.18s ease-out,
-        border-color 0.18s ease-out;
+      transition: transform 0.18s ease-out, box-shadow 0.18s ease-out, color 0.18s ease-out, border-color 0.18s ease-out;
       animation: neon-flicker 2.2s linear both;
       animation-delay: 0.25s;
     }
@@ -195,63 +171,21 @@
       opacity: 0.45;
     }
 
-    /* ===== Neon Flicker Animation (on page load) ===== */
-
+    /* Flicker animation */
     @keyframes neon-flicker {
-      0% {
-        opacity: 0;
-        filter: brightness(0.4);
-      }
-      5% {
-        opacity: 1;
-      }
-      12% {
-        opacity: 0.2;
-      }
-      18% {
-        opacity: 1;
-      }
-      26% {
-        opacity: 0.1;
-      }
-      32% {
-        opacity: 1;
-      }
-      45% {
-        opacity: 0.4;
-      }
-      55% {
-        opacity: 1;
-        filter: brightness(0.9);
-      }
-      72% {
-        opacity: 0.7;
-      }
-      100% {
-        opacity: 1;
-        filter: brightness(1);
-      }
-    }
-
-    /* ===== Responsiveness ===== */
-
-    @media (max-width: 600px) {
-      .page {
-        padding-inline: 1.2rem;
-        gap: 1.75rem;
-      }
-
-      .logo-wrapper {
-        padding: 1.4rem 1.8rem;
-      }
-
-      .social-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-      }
+      0% { opacity: 0; filter: brightness(0.4); }
+      5% { opacity: 1; }
+      12% { opacity: 0.2; }
+      18% { opacity: 1; }
+      26% { opacity: 0.1; }
+      32% { opacity: 1; }
+      45% { opacity: 0.4; }
+      55% { opacity: 1; filter: brightness(0.9); }
+      72% { opacity: 0.7; }
+      100% { opacity: 1; filter: brightness(1); }
     }
   </style>
+
 </head>
 
 <body>
@@ -259,15 +193,9 @@
     <main class="hero">
       <p class="meta">Indie / Alternative · 4-Piece Cover Band</p>
 
-      <!-- LOGO AREA -->
-      <!-- Replace the .logo text with an <img> if you want to use your generated logo image instead:
-           <img src="images/nineteen-forever-logo.png" alt="Nineteen Forever logo" class="logo-img" />
-           and tweak styles as needed. -->
+      <!-- LOGO IMAGE INSERTED HERE -->
       <div class="logo-wrapper">
-        <div class="logo">
-          Nineteen
-          <span>Forever</span>
-        </div>
+        <img src="images/neon-logo.png" alt="Nineteen Forever Neon Logo" class="logo-img" />
       </div>
 
       <p class="tagline">
@@ -277,38 +205,16 @@
 
     <footer>
       <div class="socials">
-        <!-- Add your real links in the href attributes -->
-        <a
-          class="social-link"
-          href="https://facebook.com/yourband"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a class="social-link" href="https://facebook.com/yourband" target="_blank">
           <div class="social-icon">f</div>
         </a>
-
-        <a
-          class="social-link"
-          href="https://instagram.com/yourband"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a class="social-link" href="https://instagram.com/yourband" target="_blank">
           <div class="social-icon">ig</div>
         </a>
-
-        <a
-          class="social-link"
-          href="https://youtube.com/@yourband"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a class="social-link" href="https://youtube.com/@yourband" target="_blank">
           <div class="social-icon">▶</div>
         </a>
-
-        <a
-          class="social-link"
-          href="mailto:youremail@band.com"
-        >
+        <a class="social-link" href="mailto:youremail@band.com">
           <div class="social-icon">✉</div>
         </a>
       </div>
@@ -317,7 +223,6 @@
     </footer>
   </div>
 
-  <!-- Small script only to keep the year current -->
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
